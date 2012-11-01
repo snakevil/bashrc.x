@@ -1,0 +1,180 @@
+# ~/.bashrc
+#
+# This file is part of bashrc.x.
+#
+# bashrc.x is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bashrc.x is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bashrc.x.  If not, see <http://www.gnu.org/licenses/>.
+#
+# @package   bashrc.x
+# @author    Snakevil Zen <zsnakevil@gmail.com>
+# @copyright © 2012 szen.in
+# @license   http://www.gnu.org/licenses/gpl.html
+
+[ -n "$BASH" ] || return
+
+[ -n "$PS1" ] || return
+
+export EDITOR=vim
+
+export INPUTRC=~/.local/bashrc.x/etc/inputrc
+
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+# Gets compatible with `Macports'.
+[ -d /opt ] \
+  && PATH="/opt/local/sbin:/opt/local/bin:/opt/sbin:/opt/bin:${PATH}"
+[ -d ~/.local/bin ] \
+  && PATH="${HOME}/.local/sbin:${HOME}/.local/bin:${PATH}"
+[ -d ~/.bashrc.x/bin ] \
+  && PATH="${HOME}/.bashrc.x/sbin:${HOME}/.bashrc.x/bin:${PATH}"
+export PATH="${HOME}/.local/bashrc.x/sbin:${HOME}/.local/bashrc.x/bin:${PATH}"
+
+PS1="\\n\\[\\e[1;30m\\]\\d <"
+[ -n "${SUDO_USER}" ] && {
+  PS1="${PS1}\\[\\e[0;31m\\]R\\[\\e[1;30m\\]("
+  PS1="${PS1}\\[\\e[0;36m\\]${SUDO_USER}\\[\\e[1;30m\\])@"
+} || PS1="${PS1}\\[\\e[0;36m\\]\\u\\[\\e[1;30m\\]@"
+PS1="${PS1}\\[\\e[0;35m\\]\\h\\[\\e[1;30m\\]:"
+PS1="${PS1}\\[\\e[0;33m\\]\\w\\[\\e[1;30m\\]>\\n"
+PS1="${PS1}\\[\\e[1;30m\\]\\A [i\\[\\e[0;37m\\]\!"
+export PS1="${PS1}\\[\\e[1;30m\\]] \\$\\[\\e[0m\\] "
+
+case "${TERM}" in
+  *xterm* | rxvt )
+    [ -n "${SUDO_USER}" ] \
+      && PS1="\\[\\e]0;R(${SUDO_USER})@\\h:\\w\\007\\]${PS1}" \
+      || PS1="\\[\\e]0;\\u@\\h:\\w\\007\\]${PS1}"
+    ;;
+esac
+
+# {{{ Configs history behavior.
+
+export HISTCONTROL="ignoreboth"
+export HISTFILESIZE=840806
+export HISTIGNORE="ls:fg:ll:la"
+export HISTSIZE=2012
+export HISTTIMEFORMAT="%F %T "
+
+shopt -s histappend
+
+# }}}
+
+# {{{ Configs files permission behavior.
+
+case `'id' -gn` in
+  `'id' -un` | staff | users )
+    umask 022
+    ;;
+  * )
+    umask 002
+    ;;
+esac
+
+# }}}
+
+# {{{ Refines highlight colors for the file-system.
+
+eval `'dircolors' -b ~/.local/bashrc.x/etc/dircolors`
+[ ! -r ~/.bashrc.x/dircolors ] \
+  || eval `'dircolors' -b ~/.bashrc.x/dircolors`
+
+# }}}
+
+# {{{ Improves commonly used commands.
+
+alias cat='cat -sb'
+alias cp='cp -ai'
+alias df='df -Th'
+
+'which' colordiff > /dev/null 2>&1 \
+  && alias diff='colordiff -u' \
+  || alias diff='diff -u'
+
+alias du='du -ch --time'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias free='free -m'
+alias grep='grep --color=auto'
+alias la='ll -A'
+alias ll='ls -hl'
+
+case `'uname' -s` in
+  Linux )
+    _ii_=linux
+    ;;
+  *[Bb][Ss][Dd] | Darwin )
+    _ii_=unix
+    ;;
+  * )
+    _ii_=wtf
+    ;;
+esac
+[ -z "$('ls' --version 2> /dev/null | 'grep' GNU 2> /dev/null)" ] \
+  || _ii_=linux
+[ cygwin != "$TERM" ] || _ii_=cygwin
+case $_ii_ in
+  cygwin )
+    alias ls='ls -F --color=auto --show-control-chars'
+    ;;
+  linux )
+    alias ls='ls -F --color=auto'
+    ;;
+  unix )
+    alias ls='ls -FG'
+    ;;
+esac
+
+alias mkdir='mkdir -p'
+alias more='less'
+alias mv='mv -i'
+alias ps='ps -ewwo"user,tty,pid,ppid,state,etime,pcpu,pmem,time,args"'
+alias rm='rm -i'
+alias su='sudo -s'
+alias v_ii_='vim'
+
+# }}}
+
+# {{{ Supports `bash-completion' in `Macports'.
+
+[ -n "$BASH_COMPLETION" ] || {
+  if [ -f /opt/local/etc/bash_completion ]; then
+    . /opt/local/etc/bash_completion
+  elif [ -f /user/local/etc/bash_completion ]; then
+    . /user/local/etc/bash_completion
+  elif [ -f /user/etc/bash_completion ]; then
+    . /user/etc/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+}
+
+# }}}
+
+# {{{ Includes extra plugins and customize preferences.
+
+for _ii_ in ~/.local/bashrc.x/etc/bashrc.d/*.sh; do
+  [ ! -r $_ii_ ] || . $_ii_
+done
+
+[ ! -d ~/.bashrc.x ] || {
+  for _ii_ in ~/.bashrc.x/*.rc; do
+    [ ! -r $_ii_ ] || . $_ii_
+  done
+}
+unset i
+
+# }}}
+
+# vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

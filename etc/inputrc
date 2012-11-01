@@ -1,0 +1,49 @@
+# ~/.local/bashrc.x/etc/inputrc
+#
+# This file is part of bashrc.x.
+#
+# bashrc.x is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bashrc.x is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bashrc.x.  If not, see <http://www.gnu.org/licenses/>.
+#
+# @package   bashrc.x
+# @author    Snakevil Zen <zsnakevil@gmail.com>
+# @copyright © 2012 szen.in
+# @license   http://www.gnu.org/licenses/gpl.html
+
+set bell-style none
+#set bind-tty-special-chars off
+#set comment-begin #
+set completion-ignore-case on
+set completion-query-items 30
+set convert-meta off
+#set disable-completion off
+#set editing-mode emacs
+#set enable-keypad off
+set expand-tilde on
+#set history-preserve-point off
+#set horizontal-scroll-mode off
+set input-meta on
+#set isearch-terminators
+#set keymap emacs-standard
+#set mark-directories on
+set mark-modified-lines on
+set mark-symlinked-directories on
+set match-hidden-files off
+set output-meta on
+#set page-completions on
+#set print-completions-horizontally off
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
+set visible-stats on
+
+# vim: se ft=readline ff=unix fenc=utf-8 sw=2 ts=2 sts=2:
