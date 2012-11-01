@@ -27,7 +27,9 @@ __BASHRC_X_PROMPT_LOAD() {
   local _t=`'date' +%s`
   [ $_t -lt `'expr' ${__BASHRC_X_PROMPT_LOAD_[1]} + 30` ] \
     || __BASHRC_X_PROMPT_LOAD_=(
-      `'uptime' | 'awk' -F'load average: ' '{split($2,x,", ");print x[1]}'`
+      `'uptime' \
+        | 'awk' -F'load average' '{print $2}' \
+        | 'awk' '{split($2,x,",");print x[1]}'`
       $_t
     )
   _p[1]="${_p[1]} l\\["

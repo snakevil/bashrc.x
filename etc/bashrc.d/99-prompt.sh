@@ -21,7 +21,7 @@
 # @license   http://www.gnu.org/licenses/gpl.html
 
 export __BASHRC_X_PROMPT_IP=`'ifconfig' 2> /dev/null \
-  | 'awk' '/inet addr:/ && !/127./ {split($2,x,".");print "."x[3]"."x[4]}'`
+  | 'awk' '!x&&/inet /&&!/127\./{x=1;split($2,y,".");print "."y[3]"."y[4]}'`
 
 [ -z "${__BASHRC_X_PROMPT_IP}" ] \
   || PS1=`'echo' "${PS1}" | 'sed' -e 's/\\\\h/'"${__BASHRC_X_PROMPT_IP}/g"`

@@ -41,18 +41,22 @@ TERM vt100
 TERM xterm
 TERM xterm-color
 
-NORMAL  00 # Default
-FILE    00 # Regular files
-DIR     01;34 # Folder files
-LINK    36 # Symbolic links
-ORPHAN  31 # Symbolic links pointing to any nonexistent files
-MISSING 05;31 # Nonexistent files which has a symbolic link pointing to
-FIFO    35 # Named pipes
-SOCK    35 # Sockets
-DOOR    33 # Doors (Solaris 2.5+)
-BLK     33 # Block devices
-CHR     33 # Character devices
-EXEC    01;32 # Executable files
+NORMAL                00 # xx default
+FILE                  00 # xx regular file
+DIR                   01;34 # Ex directory
+LINK                  36 # gx symbolic link
+FIFO                  35;47 # fh pipe
+SOCK                  35 # fx socket
+DOOR                  35 # fx door (solaris 2.5+)
+BLK                   35;44 # fe block device driver
+CHR                   33;44 # de character device driver
+ORPHAN                36;41 # gb symlink to nonexistent file, or non-stat'able file
+SETUID                01;32;41 # Cb file that is setuid (u+s)
+SETGID                01;32;43 # Cd file that is setgid (g+s)
+STICKY_OTHER_WRITABLE 34;43 # ed dir that is sticky and other-writable (+t,o+w)
+OTHER_WRITABLE        34;41 # eb dir that is other-writable (o+w) and not sticky
+MISSING               05;31 # bx nonexistent file which has a symbolic link pointing to
+EXEC                  01;32 # Cx executable
 
 .bash_history       01;30 # Misc files
 .CFUserTextEncoding 01;30

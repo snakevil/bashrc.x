@@ -31,17 +31,25 @@ export INPUTRC=~/.local/bashrc.x/etc/inputrc
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-# Gets compatible with `Macports'.
-[ -d /opt ] \
-  && PATH="/opt/local/sbin:/opt/local/bin:/opt/sbin:/opt/bin:${PATH}"
-[ -d ~/.local/bin ] \
-  && PATH="${HOME}/.local/sbin:${HOME}/.local/bin:${PATH}"
+PATH="/usr/sbin:/usr/bin:/sbin:/bin"
+MANPATH='/usr/share/man'
+[ -d /usr/local ] && {
+  PATH="/usr/local/sbin:/usr/local/bin:${PATH}"
+  MANPATH="/usr/local/share/man:${MANPATH}"
+}
+[ -d /opt/local ] && {
+  PATH="/opt/local/sbin:/opt/local/libexec/gnubin:/opt/local/bin:${PATH}"
+  MANPATH="/opt/local/libexec/gnubin/man:/opt/local/share/man:${MANPATH}"
+}
+PATH="${HOME}/.local/sbin:${HOME}/.local/bin:${PATH}"
+MANPATH="${HOME}/.local/share/man:${MANPATH}"
+PATH="${HOME}/.local/bashrc.x/sbin:${HOME}/.local/bashrc.x/bin:${PATH}"
 [ -d ~/.bashrc.x/bin ] \
   && PATH="${HOME}/.bashrc.x/sbin:${HOME}/.bashrc.x/bin:${PATH}"
-export PATH="${HOME}/.local/bashrc.x/sbin:${HOME}/.local/bashrc.x/bin:${PATH}"
+export PATH
+export MANPATH
 
-PS1="\\n\\[\\e[1;30m\\]\\d <"
+PS1="\\n\\[\\e[0m\\e[1;30m\\]\\d <"
 [ -n "${SUDO_USER}" ] && {
   PS1="${PS1}\\[\\e[0;31m\\]R\\[\\e[1;30m\\]("
   PS1="${PS1}\\[\\e[0;36m\\]${SUDO_USER}\\[\\e[1;30m\\])@"
@@ -86,9 +94,12 @@ esac
 
 # {{{ Refines highlight colors for the file-system.
 
-eval `'dircolors' -b ~/.local/bashrc.x/etc/dircolors`
-[ ! -r ~/.bashrc.x/dircolors ] \
-  || eval `'dircolors' -b ~/.bashrc.x/dircolors`
+'which' dircolors &> /dev/null && {
+  [ -r ~/.bashrc.x/dircolors ] \
+    && eval `'dircolors' -b ~/.bashrc.x/dircolors` \
+    || eval `'dircolors' -b ~/.local/bashrc.x/etc/dircolors`
+}
+export LSCOLORS="ExgxfxfhCxfedeCbCdedeb"
 
 # }}}
 
