@@ -1,4 +1,4 @@
-# ~/.local/bashrc.x/etc/bashrc.d/49-hg.sh
+# ~/.local/bashrc.x/etc/bashrc.d/90-prompt-pwd.sh
 #
 # This file is part of bashrc.x.
 #
@@ -20,17 +20,31 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-export __BASHRC_X_PROMPT_HG=""
+export __BASHRC_X_PROMPT_PWD="${PWD}"
 
-__BASHRC_X_PROMPT_HG() {
-  _p=(1 "")
-  [ "${__BASHRC_X_PROMPT_OLDPWD}" == "${PWD}" ] \
-    || __BASHRC_X_PROMPT_HG=`'hg' branch 2> /dev/null`
-  [ -z ${__BASHRC_X_PROMPT_HG} ] && {
-    'alias' hcd &> /dev/null && 'unalias' hcd || return
-  } || {
-    _p[1]="*h\\[\\e[0;32m\\]${__BASHRC_X_PROMPT_HG}\\[\\e[1;30m\\]"
-    'alias' hcd="cd '`'hg' root 2> /dev/null`'"
+__BASHRC_X_PROMPT_PWD() {
+  _p=(0 "")
+  [ "${__BASHRC_X_PROMPT_OLDPWD}" == "${PWD}" ] || {
+    __BASHRC_X_PROMPT_PWD=`
+    'echo' "${PWD/$HOME/~}" \
+      | 'awk' -F'/' '{
+          i = "*";
+          j = $1 "/";
+          for ( k = 2; k < NF; k++ ) {
+            l = length( $k );
+            for ( m = 1; m <= l; m++) {
+              n = 0;
+              while ( "ls -d " j substr( $k, 0, m ) "* 2> /dev/null" | getline o )
+                n++;
+              if ( 1 == n ) break;
+            }
+            if ( m == l )
+              j = j $k "/";
+            else
+              j = j substr( $k, 0, m ) i "/";
+          }
+          print j $NF
+        }'`
   }
 }
 

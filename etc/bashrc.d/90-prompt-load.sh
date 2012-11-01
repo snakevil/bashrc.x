@@ -20,20 +20,20 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-export __BASHRC_X_PROMPT_LOAD_=(0.00 0)
+export __BASHRC_X_PROMPT_LOAD=(0.00 0)
 
 __BASHRC_X_PROMPT_LOAD() {
   _p=(2 "")
   local _t=`'date' +%s`
-  [ $_t -lt `'expr' ${__BASHRC_X_PROMPT_LOAD_[1]} + 30` ] \
-    || __BASHRC_X_PROMPT_LOAD_=(
+  [ $_t -lt `'expr' ${__BASHRC_X_PROMPT_LOAD[1]} + 30` ] \
+    || __BASHRC_X_PROMPT_LOAD=(
       `'uptime' \
         | 'awk' -F'load average' '{print $2}' \
         | 'awk' '{split($2,x,",");print x[1]}'`
       $_t
     )
   _p[1]="${_p[1]} l\\["
-  case "${__BASHRC_X_PROMPT_LOAD_[0]}" in
+  case "${__BASHRC_X_PROMPT_LOAD[0]}" in
     0.0? )
       _p[1]="${_p[1]}\\e[1;32m\\]"
       ;;
@@ -44,7 +44,7 @@ __BASHRC_X_PROMPT_LOAD() {
       _p[1]="${_p[1]}\\e[1;31m\\]"
       ;;
   esac
-  _p[1]="${_p[1]}${__BASHRC_X_PROMPT_LOAD_[0]}\\[\\e[0m\\e[1;30m\\]"
+  _p[1]="${_p[1]}${__BASHRC_X_PROMPT_LOAD[0]}\\[\\e[0m\\e[1;30m\\]"
 }
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:
