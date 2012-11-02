@@ -38,7 +38,7 @@ __BASHRC_X_PROMPT_PWD() {
               close( o )
               if ( 1 == n ) break
             }
-            if ( m == l ) j = j $k "/"
+            if ( m + 2 > l ) j = j $k "/"
             else
               j = j substr( $k, 1, m ) i "/"
           }
