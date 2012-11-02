@@ -28,20 +28,20 @@ __BASHRC_X_PROMPT_PWD() {
     __BASHRC_X_PROMPT_PWD=`
     'echo' "${PWD/$HOME/~}" \
       | 'awk' -F'/' '{
-          i = "*";
-          j = $1 "/";
+          i = "*"
+          j = $1 "/"
           for ( k = 2; k < NF; k++ ) {
-            l = length( $k );
+            l = length( $k )
             for ( m = 1; m <= l; m++) {
-              n = 0;
-              while ( "ls -d " j substr( $k, 0, m ) "* 2> /dev/null" | getline o )
-                n++;
-              if ( 1 == n ) break;
+              n = 0
+              o = "ls -d " j substr( $k, 1, m ) "* 2> /dev/null"
+              while ( 0 < ( o | getline p) ) n++
+              close( o )
+              if ( 1 == n ) break
             }
-            if ( m == l )
-              j = j $k "/";
+            if ( m == l ) j = j $k "/"
             else
-              j = j substr( $k, 0, m ) i "/";
+              j = j substr( $k, 1, m ) i "/"
           }
           print j $NF
         }'`
