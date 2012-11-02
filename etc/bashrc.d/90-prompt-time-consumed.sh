@@ -23,7 +23,28 @@
 __BASHRC_X_PROMPT_TIME_CONSUMED() {
   _p=(2 "")
   local _t=`'echo' $('date' +%s.%N) $__BASHRC_X_CHECKPOINT \
-    | 'awk' '{OFMT="%.3f";print($1-$2)}'`
+    | 'awk' '{
+        z = $1 - $2
+        split( z % 60, y, "." )
+        n = substr( y[2], 1, 3 )
+        s = y[1] "s"
+        d = h = m = ""
+        x = int( z / 60 )
+        if ( x ) {
+          m = ( x % 60 ) "m"
+          x = int( x / 60 )
+          if ( x ) {
+            h = ( x % 24 ) "h"
+            x = int( x / 24 )
+            if ( x )
+              d = x "d"
+          }
+        }
+        if ( length( d ) ) print d h m
+        else if ( length( h ) ) print h m s
+        else if ( length( m ) ) print m s n
+        else print s n
+      }'`
   _p[1]=" c\\[\\e[0;37m\\]$_t\\[\\e[0m\\e[1;30m\\]"
 }
 
