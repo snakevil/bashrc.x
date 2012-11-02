@@ -20,6 +20,8 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
+export __BASHRC_X_CHECKPOINT=(`'date' +%s.%N`, "")
+
 [ -n "$BASH" ] || return
 
 [ -n "$PS1" ] || return
@@ -32,7 +34,10 @@ export HISTTIMEFORMAT="%F %T "
 
 shopt -s histappend
 
-for _ii_ in ~/.local/bashrc.x/etc/bashrc.d/*.sh; do
+set -o functrace
+shopt -s extdebug
+
+for _ii_ in ~/.local/bashrc.x/etc/bashrc.d/[0-9][0-9]-*.sh; do
   [ ! -r $_ii_ ] || . $_ii_
 done
 

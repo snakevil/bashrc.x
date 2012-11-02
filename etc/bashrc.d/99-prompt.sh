@@ -59,6 +59,7 @@ __BASHRC_X_PROMPT() {
   }
   [ -z "${_s}" ] || PS1=`'echo' "${__BASHRC_X_PROMPT_PS}" | 'sed' -e "${_s}"`
   __BASHRC_X_PROMPT_OLDPWD="${PWD}"
+  __BASHRC_X_CHECKPOINT[1]="ready"
 }
 export PROMPT_COMMAND=__BASHRC_X_PROMPT
 

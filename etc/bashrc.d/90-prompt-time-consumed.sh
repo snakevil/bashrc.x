@@ -1,4 +1,4 @@
-# ~/.local/bashrc.x/etc/bashrc.d/90-prompt-load.sh
+# ~/.local/bashrc.x/etc/bashrc.d/90-prompt-time-consumed.sh
 #
 # This file is part of bashrc.x.
 #
@@ -20,31 +20,23 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-export __BASHRC_X_PROMPT_LOAD=(0.00 0)
-
-__BASHRC_X_PROMPT_LOAD() {
+__BASHRC_X_PROMPT_TIME_CONSUMED() {
   _p=(2 "")
-  local _t=`'date' +%s`
-  [ $_t -lt `'expr' ${__BASHRC_X_PROMPT_LOAD[1]} + 30` ] \
-    || __BASHRC_X_PROMPT_LOAD=(
-      `'uptime' \
-        | 'awk' -F'load average' '{print $2}' \
-        | 'awk' '{split($2,x,",");print x[1]}'`
-      $_t
-    )
-  _p[1]="${_p[1]} l\\["
-  case "${__BASHRC_X_PROMPT_LOAD[0]}" in
-    0.0? )
-      _p[1]="${_p[1]}\\e[1;32m\\]"
-      ;;
-    0.?? )
-      _p[1]="${_p[1]}\\e[1;33m\\]"
-      ;;
-    * )
-      _p[1]="${_p[1]}\\e[1;31m\\]"
-      ;;
-  esac
-  _p[1]="${_p[1]}${__BASHRC_X_PROMPT_LOAD[0]}\\[\\e[0m\\e[1;30m\\]"
+  local _t=`'echo' $('date' +%s.%N) $__BASHRC_X_CHECKPOINT \
+    | 'awk' '{OFMT="%.3f";print($1-$2)}'`
+  _p[1]=" c\\[\\e[0;37m\\]$_t\\[\\e[0m\\e[1;30m\\]"
 }
+
+# REF # http://www.twistedmatrix.com/users/glyph/preexec.bash.txt
+
+__BASHRC_X_CHECKPOINT() {
+  [ -z "${__BASHRC_X_CHECKPOINT[1]}" ] \
+    || __BASHRC_X_CHECKPOINT=(
+        `'date' +%s.%N`
+        ""
+      )
+}
+
+trap __BASHRC_X_CHECKPOINT DEBUG
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:
