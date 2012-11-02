@@ -24,8 +24,10 @@ export EDITOR=vim
 
 export INPUTRC=~/.local/bashrc.x/etc/inputrc
 
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+'type' locale &> /dev/null && {
+  export LANG=en_US.UTF-8
+  export LC_ALL=en_US.UTF-8
+}
 
 PATH="/usr/sbin:/usr/bin:/sbin:/bin"
 MANPATH='/usr/share/man'

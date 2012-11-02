@@ -20,7 +20,7 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-'which' dircolors &> /dev/null && {
+'type' dircolors &> /dev/null && {
   [ -r ~/.bashrc.x/dircolors ] \
     && eval `'dircolors' -b ~/.bashrc.x/dircolors` \
     || [ -r ~/.local/bashrc.x/etc/dircolors ] \
