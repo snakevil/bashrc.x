@@ -50,7 +50,7 @@ __BASHRC_X_PROMPT() {
   [ 0 -eq $_e ] \
     || _x[1]="${_x[1]} e\\[\\e[1;31m\\]${_e}\\[\\e[0m\\e[1;30m\\]"
   [ -z "${__BASHRC_X_PROMPT_PWD}" ] \
-    || _s="s/\\\\w/${__BASHRC_X_PROMPT_PWD//\//\\/}/g"
+    || _s="s/\\\\w/${__BASHRC_X_PROMPT_PWD////\\/}/g"
   [ -z "${_x[0]}" ] || {
     _s="${_s};s<><${_x[0]//\\/\\\\}><"
   }
