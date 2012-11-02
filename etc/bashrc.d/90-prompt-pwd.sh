@@ -27,7 +27,7 @@ __BASHRC_X_PROMPT_PWD() {
   [ "${__BASHRC_X_PROMPT_OLDPWD}" == "${PWD}" ] || {
     __BASHRC_X_PROMPT_PWD=`
     'echo' "${PWD/$HOME/~}" \
-      | 'awk' -F'/' '{
+      | 'awk' -F'/' '1 < NF {
           i = "*"
           j = $1 "/"
           for ( k = 2; k < NF; k++ ) {
