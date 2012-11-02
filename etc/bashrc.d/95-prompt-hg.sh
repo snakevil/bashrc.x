@@ -1,4 +1,4 @@
-# ~/.local/bashrc.x/etc/bashrc.d/49-hg.sh
+# ~/.local/bashrc.x/etc/bashrc.d/95-prompt-hg.sh
 #
 # This file is part of bashrc.x.
 #

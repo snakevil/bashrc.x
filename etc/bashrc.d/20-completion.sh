@@ -1,4 +1,4 @@
-# ~/.bashrc
+# ~/.local/bashrc.x/etc/bashrc.d/20-completion.sh
 #
 # This file is part of bashrc.x.
 #
@@ -20,27 +20,16 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-[ -n "$BASH" ] || return
-
-[ -n "$PS1" ] || return
-
-export HISTCONTROL="ignoreboth"
-export HISTFILESIZE=840806
-export HISTIGNORE="ls:fg:ll:la"
-export HISTSIZE=2012
-export HISTTIMEFORMAT="%F %T "
-
-shopt -s histappend
-
-for _ii_ in ~/.local/bashrc.x/etc/bashrc.d/*.sh; do
-  [ ! -r $_ii_ ] || . $_ii_
-done
-
-[ ! -d ~/.bashrc.x ] || {
-  for _ii_ in ~/.bashrc.x/*.rc; do
-    [ ! -r $_ii_ ] || . $_ii_
-  done
+[ -n "$BASH_COMPLETION" ] || {
+  if [ -f /opt/local/etc/bash_completion ]; then
+    . /opt/local/etc/bash_completion
+  elif [ -f /user/local/etc/bash_completion ]; then
+    . /user/local/etc/bash_completion
+  elif [ -f /user/etc/bash_completion ]; then
+    . /user/etc/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
 }
-unset -v _ii_ _jj_ _kk_
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

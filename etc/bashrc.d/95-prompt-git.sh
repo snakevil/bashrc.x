@@ -1,4 +1,4 @@
-# ~/.local/bashrc.x/etc/bashrc.d/49-svn.sh
+# ~/.local/bashrc.x/etc/bashrc.d/95-prompt-git.sh
 #
 # This file is part of bashrc.x.
 #
@@ -20,13 +20,19 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-export __BASHRC_X_PROMPT_SVN=""
+export __BASHRC_X_PROMPT_GIT=""
 
-__BASHRC_X_PROMPT_SVN() {
+__BASHRC_X_PROMPT_GIT() {
   _p=(1 "")
   [ "${__BASHRC_X_PROMPT_OLDPWD}" == "${PWD}" ] \
-    || __BASHRC_X_PROMPT_SVN=`'svn' info &> /dev/null && 'echo' trunk`
-  [ -z "${__BASHRC_X_PROMPT_SVN}" ] || _p[1]="*s"
+    || __BASHRC_X_PROMPT_GIT=`'git' symbolic-ref HEAD 2> /dev/null \
+      | 'awk' -F'/' '{print $3}'`
+  [ -z "${__BASHRC_X_PROMPT_GIT}" ] && {
+    'alias' gcd &> /dev/null && 'unalias' gcd || return
+  } || {
+    _p[1]="/g\\[\\e[0;32m\\]${__BASHRC_X_PROMPT_GIT}\\[\\e[1;30m\\]"
+    'alias' gcd="cd '`'git' rev-parse --show-toplevel 2> /dev/null`'"
+  }
 }
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

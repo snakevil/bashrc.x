@@ -1,4 +1,4 @@
-# ~/.bashrc
+# ~/.local/bashrc.x/etc/bashrc.d/95-prompt-svn.sh
 #
 # This file is part of bashrc.x.
 #
@@ -20,27 +20,13 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-[ -n "$BASH" ] || return
+export __BASHRC_X_PROMPT_SVN=""
 
-[ -n "$PS1" ] || return
-
-export HISTCONTROL="ignoreboth"
-export HISTFILESIZE=840806
-export HISTIGNORE="ls:fg:ll:la"
-export HISTSIZE=2012
-export HISTTIMEFORMAT="%F %T "
-
-shopt -s histappend
-
-for _ii_ in ~/.local/bashrc.x/etc/bashrc.d/*.sh; do
-  [ ! -r $_ii_ ] || . $_ii_
-done
-
-[ ! -d ~/.bashrc.x ] || {
-  for _ii_ in ~/.bashrc.x/*.rc; do
-    [ ! -r $_ii_ ] || . $_ii_
-  done
+__BASHRC_X_PROMPT_SVN() {
+  _p=(1 "")
+  [ "${__BASHRC_X_PROMPT_OLDPWD}" == "${PWD}" ] \
+    || __BASHRC_X_PROMPT_SVN=`'svn' info &> /dev/null && 'echo' trunk`
+  [ -z "${__BASHRC_X_PROMPT_SVN}" ] || _p[1]="*s"
 }
-unset -v _ii_ _jj_ _kk_
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:
