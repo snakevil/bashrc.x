@@ -1,4 +1,4 @@
-# ~/.local/bashrc.x/etc/bashrc.d/05-dircolors.sh
+# ~/.local/bashrc.x/etc/bashrc.d/05-colors.sh
 #
 # This file is part of bashrc.x.
 #
@@ -27,5 +27,7 @@
       && eval `'dircolors' -b ~/.local/bashrc.x/etc/dircolors`
 }
 export LSCOLORS="ExgxfxfhCxfedeCbCdedeb"
+
+export GREP_COLOR="01;33"
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

@@ -20,6 +20,12 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias -- -='cd -'
+
 alias cat='cat -sb'
 alias cp='cp -ai'
 alias df='df -Th'
@@ -29,12 +35,12 @@ alias df='df -Th'
   || alias diff='diff -u'
 
 alias du='du -ch --time'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
+alias egrep='LANG=C egrep --color=auto'
+alias fgrep='LANG=C fgrep --color=auto'
 alias free='free -m'
-alias grep='grep --color=auto'
+alias grep='LANG=C grep --color=auto'
 alias la='ll -A'
-alias ll='ls -hl'
+alias ll='ls -hlt'
 
 case `'uname' -s` in
   Linux )
@@ -65,9 +71,11 @@ esac
 alias mkdir='mkdir -p'
 alias more='less'
 alias mv='mv -i'
+alias od='od -Ax -tx1cz -v'
 alias ps='ps -ewwo"user,tty,pid,ppid,state,etime,pcpu,pmem,time,args"'
 alias rm='rm -i'
 alias su='sudo -s'
 alias vi='vim'
+alias vim='vim -X'
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:
