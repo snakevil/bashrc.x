@@ -1,0 +1,562 @@
+#!/bin/sh
+#
+# Tests `bashrc.x/bin/x'.
+#
+# This file is part of bashrc.x.
+#
+# bashrc.x is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bashrc.x is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bashrc.x.  If not, see <http://www.gnu.org/licenses/>.
+#
+# @package   bashrc.x
+# @author    Snakevil Zen <zsnakevil@gmail.com>
+# @copyright © 2012 szen.in
+# @license   http://www.gnu.org/licenses/gpl.html
+
+p1=`'readlink' -f "$0"`
+p1=`'dirname' "$p1"`
+p2=`'dirname' "$p1"`
+p3="${HOME}"
+
+# {{{1 strcuture
+
+# {{{2 _check_o_()
+_check_o_() {
+  local x=`/bin/echo -n "$1"`
+  local y=`/bin/echo -n "$2"`
+  [ 2 -eq $# -a "s$x" = "s$y" ] || {
+    echo 'failed'
+    echo '>> o (expected): '
+    echo "$x" | 'od' -Ax -tx1cz -v
+    echo '>> o (captured): '
+    echo "$y" | 'od' -Ax -tx1cz -v
+    _reset_
+    exit
+  }
+}
+# }}}2
+
+# {{{2 _check_e_()
+_check_e_() {
+  [ 2 -eq $# -a $1 -eq $2 ] || {
+    echo 'failed'
+    echo ">> e (expected): $1"
+    echo ">> e (captured): $2"
+    _reset_
+    exit
+  }
+}
+# }}}2
+
+# {{{2 _pass_()
+_pass_() {
+  echo 'passed'
+  _reset_
+}
+# }}}2
+
+# {{{2 _reset_()
+_reset_() {
+  'rm' -f ~/.bashrc.x/xrc
+}
+# }}}2
+
+# {{{2 _title_()
+_title_() {
+  'printf' '%-70s' "testing $*..."
+  _reset_
+}
+# }}}2
+
+# }}}1
+
+# {{{1 test `x`
+
+_test_x_() {
+
+# {{{2 `x'
+_title_ '`x'"'"
+o=`'x'`
+_check_e_ 0 $?
+_check_o_ 'total 0' "$o"
+_pass_
+# }}}2
+
+# {{{2 `x -c'
+_title_ '`x -c'"'"
+o=`'x' -c`
+_check_e_ 0 $?
+_check_o_ 0 "$o"
+o=`'x' --count 2>&1`
+_check_e_ 0 $?
+_check_o_ 0 "$o"
+_pass_
+# }}}2
+
+# {{{2 `x -s'
+_title_ '`x -s'"'"
+o=`'x' -s`
+_check_e_ 0 $?
+_check_o_ '' "$o"
+o=`'x' --silent`
+_check_e_ 0 $?
+_check_o_ '' "$o"
+_pass_
+# }}}2
+
+# {{{2 `x' with undeclared alias
+_title_ '`x'"' with undeclared alias"
+o=`'x' a 2>&1`
+_check_e_ 3 $?
+_check_o_ 'x: undeclared' "$o"
+_pass_
+# }}}2
+
+# {{{2 `x' with invalid alias
+_title_ '`x'"' with invalid alias"
+o=`'x' "a@" 2>&1`
+_check_e_ 2 $?
+_check_o_ 'x: invalid `a@'"' with symbols" "$o"
+_pass_
+# }}}2
+
+# {{{2 `x' with too long alias
+_title_ '`x'"' with too long alias"
+o=`'x' "abcdefghijklmnopq" 2>&1`
+_check_e_ 3 $?
+_check_o_ 'x: `abcdefghijklmnopq'"' too long to max of 16 chars" "$o"
+_pass_
+# }}}2
+
+# {{{2 `x -s' with undeclared alias
+_title_ '`x -s'"' with undeclared alias"
+o=`'x' -s a 2> /dev/null`
+_check_e_ 3 $?
+_check_o_ '' "$o"
+o=`'x' --silent b 2> /dev/null`
+_check_e_ 3 $?
+_check_o_ '' "$o"
+_pass_
+# }}}2
+
+# {{{2 `x -s' with invalid alias
+_title_ '`x -s'"' with invalid alias"
+o=`'x' -s "a@" 2>&1`
+_check_e_ 2 $?
+_check_o_ '' "$o"
+_pass_
+# }}}2
+
+# {{{2 `x -s' with too long alias
+_title_ '`x -s'"' with too long alias"
+o=`'x' -s "abcdefghijklmnopq" 2>&1`
+_check_e_ 3 $?
+_check_o_ '' "$o"
+_pass_
+# }}}2
+
+}
+
+# }}}1
+
+# {{{1 test `xad'
+
+_test_xad_() {
+
+# {{{2 `xad'
+_title_ '`xad'"'"
+cd "$p3"
+o=`'xad' a b c 2>&1`
+_check_e_ 0 $?
+_check_o_ 'xad: declared' "$o"
+o=`'xad' a b c 2>&1`
+_check_e_ 0 $?
+_check_o_ 'xad: declared already!' "$o"
+o=`'x' a 2> /dev/null`
+_check_e_ 0 $?
+_check_o_ "$p3" "$o"
+o=`'x' -s b 2>&1`
+_check_e_ 3 $?
+o=`'x' -s c 2>&1`
+_check_e_ 3 $?
+_check_o_ 1 "$('x' -c)"
+_pass_
+# }}}2
+
+# {{{2 `xad' without alias
+_title_ '`xad'"' without alias"
+cd "$p3"
+o=`'xad' 2>&1`
+_check_e_ 2 $?
+_pass_
+# }}}2
+
+# {{{2 `xad' with invalid alias
+_title_ '`xad'"' with invalid alias"
+o=`'xad' "a@" 2>&1`
+_check_e_ 3 $?
+_check_o_ 'xad: invalid `a@'"' with symbols" "$o"
+_pass_
+# }}}2
+
+# {{{2 `xad' with too long alias
+_title_ '`xad'"' with too long alias"
+o=`'xad' "abcdefghijklmnopq" 2>&1`
+_check_e_ 4 $?
+_check_o_ 'xad: `abcdefghijklmnopq'"' too long to max of 16 chars" "$o"
+_pass_
+# }}}2
+
+# {{{2 `xad' multiple times on different directories
+_title_ '`xad'"' multiple times on different directories"
+cd "$p3"
+o=`'xad' a 2>&1`
+cd "$p2"
+o=`echo 'y' | 'xad' a 2>&1`
+_check_e_ 0 $?
+_check_o_ 'xad: declared for `'"$p3' yet, replace? ( Yes / No ) xad: replaced" \
+  "$o"
+_check_o_ "$p2" "$('x' a 2> /dev/null)"
+cd "$p1"
+o=`echo 'no' | 'xad' a 2>&1`
+_check_e_ 5 $?
+_check_o_ 'xad: declared for `'"$p2' yet, replace? ( Yes / No ) xad: aborted" \
+  "$o"
+_check_o_ "$p2" "$('x' a 2> /dev/null)"
+_check_o_ 1 "$('x' -c)"
+_pass_
+# }}}2
+
+# {{{2 `xad' multiple times with different aliases
+_title_ '`xad'"' multiple times with different aliases"
+cd "$p3"
+o=`'xad' a 2>&1`
+o=`echo 'y' | 'xad' b 2>&1`
+_check_e_ 0 $?
+_check_o_ 'xad: declared as `'"a' yet, duplicate? ( Yes / No ) xad: duplicated" \
+  "$o"
+_check_o_ 2 "$('x' -c)"
+o=`echo 'y' | 'xad' c 2>&1`
+_check_e_ 0 $?
+_check_o_ 'xad: declared as `'"a' and "'`'"b' yet, duplicate? ( Yes / No ) xad: duplicated" \
+  "$o"
+_check_o_ 3 "$('x' -c)"
+_check_o_ "$p3" "$('x' a 2> /dev/null)"
+_check_o_ "$p3" "$('x' b 2> /dev/null)"
+_check_o_ "$p3" "$('x' c 2> /dev/null)"
+o=`echo 'no' | 'xad' d 2>&1`
+_check_e_ 0 $?
+_check_o_ 'xad: declared as `'"a', "'`b'"' and "'`c'"' yet, duplicate? ( Yes / No ) xad: replaced" \
+  "$o"
+_check_o_ 1 "$('x' -c)"
+o=`'x' a 2> /dev/null`
+_check_e_ 3 $?
+o=`'x' b 2> /dev/null`
+_check_e_ 3 $?
+o=`'x' c 2> /dev/null`
+_check_e_ 3 $?
+_check_o_ "$p3" "$('x' d 2> /dev/null)"
+_pass_
+# }}}2
+
+# {{{2 `xad -f' without alias
+_title_ '`xad -f'"' without alias"
+cd "$p3"
+o=`'xad' -f 2>&1`
+_check_e_ 2 $?
+_pass_
+# }}}2
+
+# {{{2 `xad -f' with invalid alias
+_title_ '`xad -f'"' with invalid alias"
+o=`'xad' -f "a@" 2>&1`
+_check_e_ 3 $?
+_check_o_ 'xad: invalid `a@'"' with symbols" "$o"
+_pass_
+# }}}2
+
+# {{{2 `xad -f' with too long alias
+_title_ '`xad -f'"' with too long alias"
+o=`'xad' -f "abcdefghijklmnopq" 2>&1`
+_check_e_ 4 $?
+_check_o_ 'xad: `abcdefghijklmnopq'"' too long to max of 16 chars" "$o"
+_pass_
+# }}}2
+
+# {{{2 `xad -f' after `xad' on different directories
+_title_ '`xad -f'"' after "'`xad'"' on different directories"
+cd "$p3"
+o=`'xad' a 2>&1`
+cd "$p2"
+o=`'xad' -f a 2>&1`
+_check_e_ 0 $?
+_check_o_ 'xad: replaced' "$o"
+_check_o_ "$p2" "$('x' a 2> /dev/null)"
+_check_o_ 1 "$('x' -c)"
+cd "$p1"
+o=`'xad' --force a 2>&1`
+_check_e_ 0 $?
+_check_o_ 'xad: replaced' "$o"
+_check_o_ "$p1" "$('x' a 2> /dev/null)"
+_check_o_ 1 "$('x' -c)"
+_pass_
+# }}}2
+
+# {{{2 `xad -f' after `xad' with different aliases
+_title_ '`xad -f'"' after "'`xad'"' with different aliases"
+cd "$p3"
+o=`'xad' a 2>&1`
+o=`'xad' -f b 2>&1`
+_check_e_ 0 $?
+_check_o_ 'xad: duplicated' "$o"
+_check_o_ 2 "$('x' -c)"
+o=`'xad' --force c 2>&1`
+_check_e_ 0 $?
+_check_o_ 'xad: duplicated' "$o"
+_check_o_ 3 "$('x' -c)"
+_check_o_ "$p3" "$('x' a 2> /dev/null)"
+_check_o_ "$p3" "$('x' b 2> /dev/null)"
+_check_o_ "$p3" "$('x' c 2> /dev/null)"
+_pass_
+# }}}2
+
+# {{{2 `xad -s' without alias
+_title_ '`xad -s'"' without alias"
+cd "$p3"
+o=`'xad' -s 2>&1`
+_check_e_ 2 $?
+_pass_
+# }}}2
+
+# {{{2 `xad -s' with invalid alias
+_title_ '`xad -s'"' with invalid alias"
+o=`'xad' -s "a@" 2>&1`
+_check_e_ 3 $?
+_check_o_ '' "$o"
+_pass_
+# }}}2
+
+# {{{2 `xad -s' with too long alias
+_title_ '`xad -s'"' with too long alias"
+o=`'xad' -s "abcdefghijklmnopq" 2>&1`
+_check_e_ 4 $?
+_check_o_ '' "$o"
+_pass_
+# }}}2
+
+# {{{2 `xad -s' after `xad' on different directories
+_title_ '`xad -s'"' after "'`xad'"' on different directories"
+cd "$p3"
+o=`'xad' a 2>&1`
+cd "$p2"
+o=`'xad' -s a 2>&1`
+_check_e_ 5 $?
+_check_o_ '' "$o"
+_check_o_ 1 "$('x' -c)"
+cd "$p1"
+o=`'xad' --silent a 2>&1`
+_check_e_ 5 $?
+_check_o_ '' "$o"
+_check_o_ "$p3" "$('x' a 2> /dev/null)"
+_check_o_ 1 "$('x' -c)"
+_pass_
+# }}}2
+
+# {{{2 `xad -s' after `xad' with different aliases
+_title_ '`xad -s'"' after "'`xad'"' with different aliases"
+cd "$p3"
+o=`'xad' a 2>&1`
+o=`'xad' -s b 2>&1`
+_check_e_ 0 $?
+_check_o_ '' "$o"
+_check_o_ 1 "$('x' -c)"
+o=`'x' a 2>&1`
+_check_e_ 3 $?
+_check_o_ 'x: undeclared' "$o"
+o=`'x' b 2> /dev/null`
+_check_e_ 0 $?
+_check_o_ "$p3" "$o"
+o=`'xad' --silent c 2>&1`
+_check_e_ 0 $?
+_check_o_ '' "$o"
+_check_o_ 1 "$('x' -c)"
+o=`'x' b 2>&1`
+_check_e_ 3 $?
+_check_o_ 'x: undeclared' "$o"
+o=`'x' c 2> /dev/null`
+_check_e_ 0 $?
+_check_o_ "$p3" "$o"
+_pass_
+# }}}2
+
+}
+
+# }}}1
+
+# {{{1 test `xrm'
+
+_test_xrm_() {
+
+# {{{2 `xrm'
+_title_ '`xrm'"'"
+cd "$p3"
+o=`'xad' -fs a; 'xad' -fs b; 'xad' -fs c; echo 'y
+y
+y' | 'xrm' a b c 2>&1`
+_check_e_ 0 $?
+_check_o_ 'xrm: remove `a'"' for "'`'"${p3}'? ( Yes / No ) xrm: remove "'`b'"'"' for `'"${p3}'? ( Yes / No ) xrm: remove "'`c'"'"' for `'"${p3}'? ( Yes / No ) xrm: "'`'"a', "'`'"b' and "'`'"c' removed" "$o"
+_check_o_ 0 "$('x' -c)"
+_pass_
+# }}}2
+
+# {{{2 `xrm' without alias
+_title_ '`xrm'"' without alias"
+cd "$p3"
+o=`'xrm' 2>&1`
+_check_e_ 2 $?
+_pass_
+# }}}2
+
+# {{{2 `xrm' with invalid alias
+_title_ '`xrm'"' with invalid alias"
+o=`'xrm' 'a@' 2>&1`
+_check_e_ 3 $?
+_check_o_ 'xrm: invalid `'"a@' with symbols" "$o"
+_pass_
+# }}}2
+
+# {{{2 `xrm' with too long alias
+_title_ '`xrm'"' with too long alias"
+o=`'xrm' "abcdefghijklmnopq" 2>&1`
+_check_e_ 4 $?
+_check_o_ 'xrm: `abcdefghijklmnopq'"' too long to max of 16 chars" "$o"
+_pass_
+# }}}2
+
+# {{{2 `xrm' with undeclared alias
+_title_ '`xrm'"' with undeclared alias"
+cd "$p3"
+o=`'xad' -fs a; echo 'y' | 'xrm' a b c 2>&1`
+_check_e_ 5 $?
+_check_o_ 'xrm: non-existant `b'"'
+xrm: non-existant "'`c'"'
+xrm: remove "'`a'"' for "'`'"${p3}'? ( Yes / No ) xrm: "'`a'"' removed" "$o"
+_pass_
+# }}}2
+
+# {{{2 `xrm' with skipped alias
+_title_ '`xrm'"' with skipped alias"
+cd "$p3"
+o=`'xad' -fs a; 'xad' -fs b; echo 'n
+y' | 'xrm' a b 2>&1`
+_check_e_ 0 $?
+_check_o_ 'xrm: remove `a'"' for "'`'"${p3}'? ( Yes / No ) xrm: remove "'`b'"'"' for `'"${p3}'? ( Yes / No ) xrm: "'`'"b' removed, "'`'"a' skipped" "$o"
+_check_o_ 1 "$('x' -c)"
+o=`echo 'n' | 'xrm' a 2>&1`
+_check_e_ 6 $?
+_check_o_ 'xrm: remove `a'"' for "'`'"${p3}'? ( Yes / No ) xrm: aborted" "$o"
+_check_o_ 1 "$('x' -c)"
+_pass_
+# }}}2
+
+# {{{2 `xrm -f' without alias
+_title_ '`xrm -f'"' without alias"
+cd "$p3"
+o=`'xrm' -f 2>&1`
+_check_e_ 2 $?
+_pass_
+# }}}2
+
+# {{{2 `xrm -f' with invalid alias
+_title_ '`xrm -f'"' with invalid alias"
+o=`'xrm' -f 'a@' 2>&1`
+_check_e_ 3 $?
+_check_o_ 'xrm: invalid `'"a@' with symbols" "$o"
+_pass_
+# }}}2
+
+# {{{2 `xrm -f' with too long alias
+_title_ '`xrm -f'"' with too long alias"
+o=`'xrm' -f "abcdefghijklmnopq" 2>&1`
+_check_e_ 4 $?
+_check_o_ 'xrm: `abcdefghijklmnopq'"' too long to max of 16 chars" "$o"
+_pass_
+# }}}2
+
+# {{{2 `xrm -f' with undeclared alias
+_title_ '`xrm -f'"' with undeclared alias"
+cd "$p3"
+o=`'xad' -fs a; 'xrm' -f a b c 2>&1`
+_check_e_ 0 $?
+_check_o_ 'xrm: non-existant `b'"'
+xrm: non-existant "'`c'"'
+xrm: "'`a'"' removed" "$o"
+_pass_
+# }}}2
+
+# {{{2 `xrm -s' without alias
+_title_ '`xrm -s'"' without alias"
+cd "$p3"
+o=`'xrm' -s 2>&1`
+_check_e_ 2 $?
+_pass_
+# }}}2
+
+# {{{2 `xrm -s' with invalid alias
+_title_ '`xrm -s'"' with invalid alias"
+o=`'xrm' -s 'a@' 2>&1`
+_check_e_ 3 $?
+_check_o_ '' "$o"
+_pass_
+# }}}2
+
+# {{{2 `xrm -s' with too long alias
+_title_ '`xrm -s'"' with too long alias"
+o=`'xrm' -s "abcdefghijklmnopq" 2>&1`
+_check_e_ 4 $?
+_check_o_ '' "$o"
+_pass_
+# }}}2
+
+# {{{2 `xrm -s' with undeclared alias
+_title_ '`xrm -s'"' with undeclared alias"
+cd "$p3"
+o=`'xad' -fs a; 'xrm' -s b c 2>&1`
+_check_e_ 5 $?
+_check_o_ '' "$o"
+_pass_
+# }}}2
+
+# {{{2 `xrm' with skipped alias
+_title_ '`xrm -s'"' with skipped alias"
+cd "$p3"
+o=`'xad' -fs a; 'xad' -fs b; 'xrm' -s a b 2>&1`
+_check_e_ 6 $?
+_check_o_ '' "$o"
+_check_o_ 2 "$('x' -c)"
+_pass_
+# }}}2
+
+}
+
+# }}}1
+
+[ 0 -eq $# ] && x="" || x="$1"
+x="_test_${x}_"
+
+type "$x" &> /dev/null && "$x" || {
+  _test_x_
+  _test_xad_
+  _test_xrm_
+}
+
+# vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

@@ -1,0 +1,694 @@
+#!/bin/sh
+#
+# Declares current working directories as aliases for fast chdir.
+#
+# This file is part of bashrc.x.
+#
+# bashrc.x is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bashrc.x is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bashrc.x.  If not, see <http://www.gnu.org/licenses/>.
+#
+# @package   bashrc.x
+# @author    Snakevil Zen <zsnakevil@gmail.com>
+# @copyright © 2012 szen.in
+# @license   http://www.gnu.org/licenses/gpl.html
+
+readonly X_CMD=`'basename' "$0"`
+readonly X_CFG=`[ -r ~/.bashrc.x ] && echo ~/.bashrc.x/xrc || echo ~/.xrc`
+
+# {{{1 common functions
+
+# {{{2 _x_m_alias_too_long_()
+_x_m_alias_too_long_() {
+  echo '`'"$1' too long to max of 16 chars"
+}
+# }}}2
+
+# {{{2 _x_m_illegal_option_()
+_x_m_illegal_option_() {
+  echo "illegal option -- $1"
+}
+# }}}2
+
+# {{{2 _x_m_internal_()
+_x_m_internal_() {
+  echo 'internal logic confusion `'"$1'"
+}
+# }}}2
+
+# {{{2 _x_m_invalid_alias_()
+_x_m_invalid_alias_() {
+  echo 'invalid `'"$1' with symbols"
+}
+# }}}2
+
+# {{{2 _x_m_more_info_()
+_x_m_more_info_() {
+  echo 'please try `'"$1 --help'"
+}
+# }}}2
+
+# {{{2 _x_halt_()
+_x_halt_() {
+  local _e=255 _m=""
+  [ 0 -eq $# ] || {
+    _e=$1
+    shift
+    [ 0 -eq $# ] || _m="$@"
+  }
+  [ -z "${_m}" ] || echo "${X_CMD}: $_m" >&2
+  exit $_e
+}
+# }}}2
+
+# {{{2 _x_warn_()
+_x_warn_() {
+  echo "${X_CMD}: $*" 1>&2
+}
+# }}}2
+
+# {{{2 _x_check_alias_()
+_x_check_alias_() {
+  [ 0 -ne $# ] || return 1
+  [ -n "$1" ] || return 2
+  [ 16 -ge `/bin/echo -n "$1" | 'wc' -c` ] || return 3
+  [ "x" = "x"`echo "$1" | 'tr' -d "[:alnum:]"` ] || return 4
+}
+# }}}2
+
+# }}}1
+
+# {{{1 x implementation
+
+# {{{2 help
+_x_x_help_() {
+  'cat' << X_HELP
+Usage: x [OPTION]... [ALIAS]
+List all declared ALIASes, or show the corresponding path to the ALIAS.
+
+Mandatory arguments to long options are mandatory for short options too.
+  -c, --count    display the amount of all declared ALIASes and exit
+  -h, --help     display this help and exit
+  -s, --silent   suppress the heading on listing, or keep silence on error
+  -V, --version  output version information and exit
+
+Exit status:
+ 0  if OK,
+ 1  if encoutering any illegal option,
+ 2  if trying any invalid alias,
+ 3  if trying any alias which is longer than 16 chars,
+ 4  if querying any non-existant alias.
+
+Report bugs to zsnakevil@gmail.com
+X_HELP
+  exit $X_PARAMS
+}
+# }}}2
+
+# {{{2 getopts
+_x_x_getopts_() {
+  local _a _o
+  for _o; do
+    case "$_o" in
+      --count )
+        _o="-c"
+        ;;
+      --help )
+        _o="-h"
+        ;;
+      --silent )
+        _o="-s"
+        ;;
+      --version )
+        _o="-V"
+        ;;
+    esac
+    _a="$_a $_o"
+  done
+  set -- $_a
+  while getopts ":chsV" _o; do
+    [ 0 -eq $? ] || {
+      X_SUBCMD="help"
+      X_PARAMS=1
+      return
+    }
+    case $_o in
+      [cs] )
+        X_OPTION="${X_OPTION}$_o"
+        ;;
+      h )
+        X_SUBCMD="help"
+        return
+        ;;
+      V )
+        X_SUBCMD="version"
+        return
+        ;;
+      * )
+        _x_warn_ `_x_m_illegal_option_ $OPTARG`
+        ;;
+    esac
+  done
+  shift `'expr' $OPTIND - 1`
+  [ 0 -eq $# ] && X_SUBCMD="list" || {
+    X_SUBCMD="query"
+    X_PARAMS=$@
+  }
+}
+# }}}2
+
+# {{{2 list
+_x_x_list_() {
+  [ -f $X_CFG ] || 'touch' $X_CFG
+  'awk' -v "o=$X_OPTION" -v "x=$X_CMD" '
+    BEGIN {
+      RS = "\x08\x06"
+      FS = "\x11\x17"
+      i = length( o )
+      for ( j = 1; j <= i; j ++ ) {
+        k = substr( o, j, 1 )
+        if ( ! oo[ k ] )
+          oo[ k ] = 1
+      }
+    }
+    {
+      aa[ $1 ] = $2
+    }
+    END {
+      if ( "c" in oo ) {
+        print NR
+        exit
+      }
+      if ( ! ( "s" in oo ) )
+        print "total " NR
+      for ( i in aa )
+        print "  " sprintf( "%-16s", i ) "  " aa[ i ]
+    }
+  ' $X_CFG
+}
+# }}}2
+
+# {{{2 query
+_x_x_query_() {
+  local _e _os
+  [ "x$X_OPTION" = "x"`echo "$X_OPTION" | 'tr' -d 's'` ] || _os=1
+  _x_check_alias_ "$1"
+  case $? in
+    0 )
+      ;;
+    3 )
+      _x_halt_ 3 `[ -z $_os ] && _x_m_alias_too_long_ "$1" || echo`
+      ;;
+    4 )
+      _x_halt_ 2 `[ -z $_os ] && _x_m_invalid_alias_ "$1" || echo`
+      ;;
+    * )
+      _x_halt_ 255
+      ;;
+  esac
+  [ -f $X_CFG ] || 'touch' $X_CFG
+  'awk' -v "a=$1" -v "o=$X_OPTION" -v "x=$X_CMD" '
+    BEGIN {
+      RS = "\x08\x06"
+      FS = "\x11\x17"
+      i = length( o )
+      for ( j = 1; j <= i; j ++ ) {
+        k = substr( o, j, 1 )
+        if ( ! oo[ k ] )
+          oo[ k ] = 1
+      }
+    }
+    a == $1 {
+      print $2
+      e = 1
+      exit
+    }
+    END {
+      if ( e )
+        exit
+      if ( ! ( "s" in oo ) )
+        print x ": undeclared" > "/dev/stderr"
+      exit 3
+    }
+    ' $X_CFG
+  _e=$?
+  [ 0 -eq $_e ] || _x_halt_ $_e
+}
+# }}}2
+
+# {{{2 version
+_x_x_version_() {
+  'cat' << X_VERSION
+x 2.0
+Copyright (C) 2012 Snakevil Zen.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by Snakevil Zen.
+X_VERSION
+  exit
+}
+# }}}2
+
+# }}}1
+
+# {{{1 xad implementation
+
+# {{{2 add
+_x_xad_add_() {
+  local _e _os
+  [ "x$X_OPTION" = "x"`echo "$X_OPTION" | 'tr' -d 's'` ] || _os=1
+  _x_check_alias_ "$1"
+  case $? in
+    0 )
+      ;;
+    3 )
+      _x_halt_ 4 `[ -z $_os ] && _x_m_alias_too_long_ "$1" || echo`
+      ;;
+    4 )
+      _x_halt_ 3 `[ -z $_os ] && _x_m_invalid_alias_ "$1" || echo`
+      ;;
+    * )
+      _x_halt_ 255
+      ;;
+  esac
+  [ -f $X_CFG ] || 'touch' $X_CFG
+  'awk' -v "a=$1" -v "f=${X_CFG}.tmp" -v "p=$PWD" -v "o=$X_OPTION" -v "x=$X_CMD" '
+    function scan ( x, y ) {
+      x = "read && echo \"${REPLY}\" | '"'"'tr'"'"' \"[:upper:]\" \"[:lower:]\""
+      x | getline y
+      close( x )
+      return substr( y, 1, length( y ) - 1)
+    }
+    BEGIN {
+      RS = "\x08\x06"
+      FS = "\x11\x17"
+      i = length( o )
+      for ( j = 1; j <= i; j ++ ) {
+        k = substr( o, j, 1 )
+        if ( ! oo[ k ] )
+          oo[ k ] = 1
+      }
+    }
+    {
+      aa[ $1 ] = $2
+      pp[ $2, ++ pps[ $2 ] ] = $1
+    }
+    END {
+      if ( a in aa ) { # alias exists
+        if ( p == aa[ a ] ) { # with same path
+          if ( ! ( "s" in oo ) )
+            print x ": declared already!"
+          exit
+        }
+        # replace ?
+        if ( "f" in oo )
+          c = "y"
+        else if ( "s" in oo )
+          c = "n"
+        else {
+          printf "%s", x ": declared for `" aa[ a ] "'"'"' yet, replace? ( Yes / No ) "
+          c = scan()
+        }
+        if ( "y" != c && "yes" != c ) {
+          if ( ! ( "s" in oo ) )
+            print x ": aborted"
+          exit 5
+        }
+        # replace !
+        for ( i = 1; i <= pps[ aa[ a ] ]; i ++ )
+          delete pp[ aa[ a ], i ]
+        delete pps[ aa[ a ] ]
+        t = 1
+      }
+      if ( p in pps ) { # path declared
+        # duplicate ?
+        if ( "f" in oo )
+          c = "y"
+        else if ( "s" in oo )
+          c = "n"
+        else {
+          i = ""
+          for ( j = 1; j <= pps[ p ]; j ++ ) {
+            i = i "`" pp[ p, j ] "'"'"'"
+            if ( 1 + j == pps[ p ] )
+              i = i " and "
+            else if ( 1 + j < pps[ p ] )
+              i = i ", "
+          }
+          printf "%s", x ": declared as " i " yet, duplicate? ( Yes / No ) "
+          c = scan()
+        }
+        if ( "y" != c && "yes" != c ) {
+          for ( i = 1; i <= pps[ p ]; i ++ ) {
+            delete aa[ pp[ p, i ] ]
+            delete pp[ p, i ]
+          }
+          delete pps[ p ]
+          t = 1
+        } else
+          t = 2
+        # duplicate !
+      }
+      aa[ a ] = p
+      pp[ p, ++ pps[ p ] ] = a
+      OFS = FS
+      ORS = RS
+      for ( i in aa )
+        print i, aa[ i ] >> f
+      ORS = "\n"
+      if ( ! ( "s" in oo ) )
+        if ( 2 == t )
+          print x ": duplicated"
+        else if ( 1 == t )
+          print x ": replaced"
+        else
+          print x ": declared"
+    }
+    ' $X_CFG >&2
+  _e=$?
+  [ 0 -eq $_e ] || _x_halt_ $_e
+  [ ! -r "${X_CFG}.tmp" ] || 'mv' -f "${X_CFG}.tmp" $X_CFG
+}
+# }}}2
+
+# {{{2 help
+_x_xad_help_() {
+  'cat' << X_HELP
+Usage: xad [OPTION]... ALIAS
+Declare current working directory as ALIAS.
+
+Mandatory arguments to long options are mandatory for short options too.
+  -f, --force    ignore all conferments, never prompt
+  -h, --help     display this help and exit
+  -s, --silent   keep silence
+  -V, --version  output version information and exit
+
+Exit status:
+ 0  if OK,
+ 1  if encoutering any illegal option,
+ 2  if missing alias,
+ 3  if trying any invalid alias,
+ 4  if trying any alias which is longer than 16 chars,
+ 5  if giving up to replace any exist alias.
+
+Report bugs to zsnakevil@gmail.com
+X_HELP
+  exit $X_PARAMS
+}
+# }}}2
+
+# {{{2 getopts
+_x_xad_getopts_() {
+  local _a _o
+  for _o; do
+    case "$_o" in
+      --force )
+        _o="-f"
+        ;;
+      --help )
+        _o="-h"
+        ;;
+      --silent )
+        _o="-s"
+        ;;
+      --version )
+        _o="-V"
+        ;;
+    esac
+    _a="$_a $_o"
+  done
+  set -- $_a
+  while getopts ":fhsV" _o; do
+    [ 0 -eq $? ] || {
+      X_SUBCMD="help"
+      X_PARAMS=1
+      return
+    }
+    case $_o in
+      [fs] )
+        X_OPTION="${X_OPTION}$_o"
+        ;;
+      h )
+        X_SUBCMD="help"
+        return
+        ;;
+      V )
+        X_SUBCMD="version"
+        return
+        ;;
+      * )
+        _x_warn_ `_x_m_illegal_option_ $OPTARG`
+        ;;
+    esac
+  done
+  shift `'expr' $OPTIND - 1`
+  [ 0 -eq $# ] && {
+    X_SUBCMD="help"
+    X_PARAMS=2
+  } || {
+    X_SUBCMD="add"
+    X_PARAMS=$1
+  }
+}
+# }}}2
+
+# {{{2 version
+_x_xad_version_() {
+  _x_x_version_
+}
+# }}}2
+
+# }}}1
+
+# {{{1 xrm implementation
+
+# {{{2 help
+_x_xrm_help_() {
+  'cat' << X_HELP
+Usage: xrm [OPTION]... ALIAS...
+Remove the ALIAS(es).
+
+Mandatory arguments to long options are mandatory for short options too.
+  -f, --force    ignore all conferments, never prompt
+  -h, --help     display this help and exit
+  -s, --silent   keep silence
+  -V, --version  output version information and exit
+
+Exit status:
+ 0  if OK,
+ 1  if encoutering any illegal option,
+ 2  if missing alias,
+ 3  if trying any invalid alias,
+ 4  if trying any alias which is longer than 16 chars,
+ 5  if trying any non-existant alias,
+ 6  if all skipped (for silence, or manually choice).
+
+Report bugs to zsnakevil@gmail.com
+X_HELP
+  exit $X_PARAMS
+}
+# }}}2
+
+# {{{2 getopts
+_x_xrm_getopts_() {
+  local _a _o
+  for _o; do
+    case "$_o" in
+      --force )
+        _o="-f"
+        ;;
+      --help )
+        _o="-h"
+        ;;
+      --silent )
+        _o="-s"
+        ;;
+      --version )
+        _o="-V"
+        ;;
+    esac
+    _a="$_a $_o"
+  done
+  set -- $_a
+  while getopts ":fhsV" _o; do
+    [ 0 -eq $? ] || {
+      X_SUBCMD="help"
+      X_PARAMS=1
+      return
+    }
+    case $_o in
+      [fs] )
+        X_OPTION="${X_OPTION}$_o"
+        ;;
+      h )
+        X_SUBCMD="help"
+        return
+        ;;
+      V )
+        X_SUBCMD="version"
+        return
+        ;;
+      * )
+        _x_warn_ `_x_m_illegal_option_ $OPTARG`
+        ;;
+    esac
+  done
+  shift `'expr' $OPTIND - 1`
+  [ 0 -eq $# ] && {
+    X_SUBCMD="help"
+    X_PARAMS=2
+  } || {
+    X_SUBCMD="remove"
+    X_PARAMS=$@
+  }
+}
+# }}}2
+
+# {{{2 remove
+_x_xrm_remove_() {
+  local _a _e _of _os
+  [ "x$X_OPTION" = "x"`echo "$X_OPTION" | 'tr' -d 'f'` ] || _of=1
+  [ "x$X_OPTION" = "x"`echo "$X_OPTION" | 'tr' -d 's'` ] || _os=1
+  for _a; do
+    _x_check_alias_ "$_a"
+    case $? in
+      0 )
+        ;;
+      3 )
+        _x_halt_ 4 `[ -z $_os ] && _x_m_alias_too_long_ "$1" || echo`
+        ;;
+      4 )
+        _x_halt_ 3 `[ -z $_os ] && _x_m_invalid_alias_ "$1" || echo`
+        ;;
+      * )
+        _x_halt_ 255
+        ;;
+    esac
+  done
+  [ -f $X_CFG ] || 'touch' $X_CFG
+  'awk' -v "f=${X_CFG}.tmp" -v "o=$X_OPTION" -v "x=$X_CMD" '
+    function join ( x, y, z, u, v, w ) {
+      for ( y in x ) {
+        z ++
+        u[ y ] = "`" y "'"'"'"
+      }
+      for ( y in u ) {
+        z --
+        v = v u[ y ]
+        if ( 1 == z )
+          v = v " and "
+        else if ( 1 < z )
+          v = v ", "
+      }
+      return v
+    }
+    function scan ( x, y ) {
+      x = "read && echo \"${REPLY}\" | '"'"'tr'"'"' \"[:upper:]\" \"[:lower:]\""
+      x | getline y
+      close( x )
+      return substr( y, 1, length( y ) - 1)
+    }
+    BEGIN {
+      RS = "\x08\x06"
+      FS = "\x11\x17"
+      i = length( o )
+      for ( j = 1; j <= i; j ++ ) {
+        k = substr( o, j, 1 )
+        if ( ! oo[ k ] )
+          oo[ k ] = 1
+      }
+      '`
+        for _a; do
+          /bin/echo -n "a[\"${_a}\"]=\"${_a}\";"
+        done
+      `'
+    }
+    {
+      aa[ $1 ] = $2
+    }
+    END {
+      for ( i in a )
+        if ( ! ( i in aa ) ) {
+          delete a[ i ]
+          oo[ "e" ] = 5
+          if ( ! ( "s" in oo ) )
+            print x ": non-existant `" i "'"'"'"
+        }
+      for ( i in a ) {
+        if ( "f" in oo )
+          c = "y"
+        else if ( "s" in oo )
+          c = "n"
+        else {
+          printf "%s", x ": remove `" i "'"'"' for `" aa[ i ] "'"'"'? ( Yes / No ) "
+          c = scan()
+        }
+        if ( "y" != c && "yes" != c ) {
+          delete a[ i ]
+          s[ i ] = i
+        } else
+          delete aa[ i ]
+      }
+      i = join( a )
+      j = join( s )
+      if ( ! i ) { # nothing to remove
+        if ( ! ( "s" in oo ) )
+          print x ": aborted"
+        if ( j ) # all skipped
+          exit 6
+        # all non-existant
+        exit 5
+      }
+      OFS = FS
+      ORS = RS
+      printf "%s", "" > f
+      for ( k in aa )
+        print k, aa[ k ] >> f
+      ORS = "\n"
+      x = x ": " i " removed"
+      if ( j )
+        x = x ", " j " skipped"
+      if ( ! ( "s" in oo ) )
+        print x
+      if ( ! ( "f" in oo ) )
+        exit oo[ "e" ]
+    }
+    ' $X_CFG >&2
+  _e=$?
+  [ 0 -eq $_e ] || _x_halt_ $_e
+  [ ! -r "${X_CFG}.tmp" ] || 'mv' -f "${X_CFG}.tmp" $X_CFG
+}
+# }}}2
+
+# {{{2 version
+_x_xrm_version_() {
+  _x_x_version_
+}
+# }}}2
+
+# }}}1
+
+_ii_="_x_${X_CMD}_getopts_"
+
+type "$_ii_" &> /dev/null \
+  && "$_ii_" $@ \
+  || _x_halt_ 255 `_x_m_more_info_ "x"`
+
+_ii_="_x_${X_CMD}_${X_SUBCMD}_"
+
+type "$_ii_" &> /dev/null \
+  && "$_ii_" $X_PARAMS \
+  || _x_halt_ 254 `_x_m_internal_ $X_SUBCMD`
+
+# vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:
