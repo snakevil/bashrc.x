@@ -97,7 +97,8 @@ List all declared ALIASes, or show the corresponding path to the ALIAS.
 
 Mandatory arguments to long options are mandatory for short options too.
   -c             display the amount of all declared ALIASes and exit
-  -s             suppress the heading on listing, or keep silence on error
+  -q             suppress the heading on listing, or keep silence on error
+  -s             display the names of ALIASes only one per each line
       --help     display this help and exit
       --version  output version information and exit
 
@@ -131,14 +132,14 @@ _x_x_getopts_() {
     _a="$_a $_o"
   done
   set -- $_a
-  while getopts ":cq" _o; do
+  while getopts ":cqs" _o; do
     [ 0 -eq $? ] || {
       X_SUBCMD="help"
       X_PARAMS=1
       return
     }
     case $_o in
-      [cq] )
+      [cqs] )
         X_OPTION="${X_OPTION}$_o"
         ;;
       * )
@@ -174,6 +175,11 @@ _x_x_list_() {
     END {
       if ( "c" in oo ) {
         print NR
+        exit
+      }
+      if ( "s" in oo ) {
+        for ( i in aa )
+          print i
         exit
       }
       if ( ! ( "q" in oo ) )

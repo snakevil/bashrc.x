@@ -93,17 +93,28 @@ _pass_
 
 # {{{2 `x -c'
 _title_ '`x -c'"'"
-o=`'x' -c`
+cd "$p1"
+o=`'xad' -fq a; 'xad' -fq b; 'x' -c 2>&1`
 _check_e_ 0 $?
-_check_o_ 0 "$o"
+_check_o_ 2 "$o"
 _pass_
 # }}}2
 
 # {{{2 `x -q'
 _title_ '`x -q'"'"
-o=`'x' -q`
+o=`'x' -q 2>&1`
 _check_e_ 0 $?
 _check_o_ '' "$o"
+_pass_
+# }}}2
+
+# {{{2 `x -s'
+_title_ '`x -s'"'"
+cd "$p2"
+o=`'xad' -fq a; 'xad' -fq b; 'x' -s 2>&1`
+_check_e_ 0 $?
+_check_o_ 'a
+b' "$o"
 _pass_
 # }}}2
 
