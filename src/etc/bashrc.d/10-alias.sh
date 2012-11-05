@@ -30,7 +30,7 @@ alias cat='cat -sb'
 alias cp='cp -ai'
 alias df='df -Th'
 
-'type' colordiff &> /dev/null \
+'which' colordiff > /dev/null 2>&1 \
   && alias diff='colordiff -u' \
   || alias diff='diff -u'
 

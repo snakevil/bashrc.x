@@ -20,12 +20,24 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-export __BASHRC_X_PROMPT_PWD="${PWD}"
+export __BASHRC_X_PROMPT_PWD="$PWD"
 
 __BASHRC_X_PROMPT_PWD() {
+  local _d
+  case "$PWD" in
+    "$HOME" )
+      _d="~"
+      ;;
+    "$HOME"/* )
+      _d="${PWD/$HOME/~}"
+      ;;
+    * )
+      _d="$PWD"
+      ;;
+  esac
   _p=(0 "")
-  [ "${__BASHRC_X_PROMPT_OLDPWD}" == "${PWD}" ] || {
-    __BASHRC_X_PROMPT_PWD=`'echo' "${PWD/$HOME/~}" \
+  [ "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] || {
+    __BASHRC_X_PROMPT_PWD=`'echo' "$_d" \
       | 'gawk' -F'/' '1 < NF {
           i = "*"
           j = $1 "/"

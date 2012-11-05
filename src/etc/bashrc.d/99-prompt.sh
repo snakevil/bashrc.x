@@ -23,12 +23,12 @@
 export __BASHRC_X_PROMPT_IP=`'ifconfig' 2> /dev/null \
   | 'awk' '!x&&/inet /&&!/127\./{x=1;split($2,y,".");print "."y[3]"."y[4]}'`
 
-[ -z "${__BASHRC_X_PROMPT_IP}" ] \
-  || PS1=`'echo' "${PS1}" | 'sed' -e 's/\\\\h/'"${__BASHRC_X_PROMPT_IP}/g"`
+[ -z "$__BASHRC_X_PROMPT_IP" ] \
+  || PS1=`'echo' "$PS1" | 'sed' -e 's/\\\\h/'"$__BASHRC_X_PROMPT_IP/g"`
 
 export __BASHRC_X_PROMPT_OLDPWD=""
 
-export __BASHRC_X_PROMPT_PS="${PS1}"
+export __BASHRC_X_PROMPT_PS="$PS1"
 
 __BASHRC_X_PROMPT() {
   local _e=$? _i _p _s="" _t _x=("" "")
@@ -48,17 +48,17 @@ __BASHRC_X_PROMPT() {
     }
   done
   [ 0 -eq $_e ] \
-    || _x[1]="${_x[1]} e\\[\\e[1;31m\\]${_e}\\[\\e[0m\\e[1;30m\\]"
-  [ -z "${__BASHRC_X_PROMPT_PWD}" ] \
+    || _x[1]="${_x[1]} e\\[\\e[1;31m\\]$_e\\[\\e[0m\\e[1;30m\\]"
+  [ -z "$__BASHRC_X_PROMPT_PWD" ] \
     || _s="s/\\\\w/${__BASHRC_X_PROMPT_PWD////\\/}/g"
   [ -z "${_x[0]}" ] || {
-    _s="${_s};s<><${_x[0]//\\/\\\\}><"
+    _s="$_s;s<><${_x[0]//\\/\\\\}><"
   }
   [ -z "${_x[1]}" ] || {
-    _s="${_s};s>] >${_x[1]//\\/\\\\}] >"
+    _s="$_s;s>] >${_x[1]//\\/\\\\}] >"
   }
-  [ -z "${_s}" ] || PS1=`'echo' "${__BASHRC_X_PROMPT_PS}" | 'sed' -e "${_s}"`
-  __BASHRC_X_PROMPT_OLDPWD="${PWD}"
+  [ -z "$_s" ] || PS1=`'echo' "$__BASHRC_X_PROMPT_PS" | 'sed' -e "$_s"`
+  __BASHRC_X_PROMPT_OLDPWD="$PWD"
   __BASHRC_X_CHECKPOINT[1]="ready"
 }
 export PROMPT_COMMAND=__BASHRC_X_PROMPT

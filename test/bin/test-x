@@ -553,7 +553,7 @@ _pass_
 [ 0 -eq $# ] && x="" || x="$1"
 x="_test_${x}_"
 
-type "$x" &> /dev/null && "$x" || {
+type "$x" > /dev/null 2>&1 && "$x" || {
   _test_x_
   _test_xad_
   _test_xrm_

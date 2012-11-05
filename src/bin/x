@@ -681,13 +681,13 @@ _x_xrm_version_() {
 
 _ii_="_x_${X_CMD}_getopts_"
 
-type "$_ii_" &> /dev/null \
+type "$_ii_" > /dev/null 2>&1 \
   && "$_ii_" $@ \
   || _x_halt_ 255 `_x_m_more_info_ "x"`
 
 _ii_="_x_${X_CMD}_${X_SUBCMD}_"
 
-type "$_ii_" &> /dev/null \
+type "$_ii_" > /dev/null 2>&1 \
   && "$_ii_" $X_PARAMS \
   || _x_halt_ 254 `_x_m_internal_ $X_SUBCMD`
 

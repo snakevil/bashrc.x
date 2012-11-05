@@ -24,9 +24,9 @@ export __BASHRC_X_PROMPT_SVN=""
 
 __BASHRC_X_PROMPT_SVN() {
   _p=(1 "")
-  [ "${__BASHRC_X_PROMPT_OLDPWD}" == "${PWD}" ] \
-    || __BASHRC_X_PROMPT_SVN=`'svn' info &> /dev/null && 'echo' trunk`
-  [ -z "${__BASHRC_X_PROMPT_SVN}" ] || _p[1]="*s"
+  [ "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] \
+    || __BASHRC_X_PROMPT_SVN=`'svn' info > /dev/null 2>&1 && 'echo' trunk`
+  [ -z "$__BASHRC_X_PROMPT_SVN" ] || _p[1]="*s"
 }
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:
