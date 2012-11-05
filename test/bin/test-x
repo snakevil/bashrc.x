@@ -31,14 +31,14 @@ p3="${HOME}"
 
 # {{{2 _check_o_()
 _check_o_() {
-  local x=`/bin/echo -n "$1"`
-  local y=`/bin/echo -n "$2"`
-  [ 2 -eq $# -a "s$x" = "s$y" ] || {
+  local _x="$(/bin/echo -n "$1")"
+  local _y="$(/bin/echo -n "$2")"
+  [ 2 -eq $# -a "s$_x" = "s$_y" ] || {
     echo 'failed'
     echo '>> o (expected): '
-    echo "$x" | 'od' -Ax -tx1cz -v
+    echo "$_x" | 'od' -Ax -tx1cz -v
     echo '>> o (captured): '
-    echo "$y" | 'od' -Ax -tx1cz -v
+    echo "$_y" | 'od' -Ax -tx1cz -v
     _reset_
     exit
   }
@@ -96,18 +96,12 @@ _title_ '`x -c'"'"
 o=`'x' -c`
 _check_e_ 0 $?
 _check_o_ 0 "$o"
-o=`'x' --count 2>&1`
-_check_e_ 0 $?
-_check_o_ 0 "$o"
 _pass_
 # }}}2
 
-# {{{2 `x -s'
-_title_ '`x -s'"'"
-o=`'x' -s`
-_check_e_ 0 $?
-_check_o_ '' "$o"
-o=`'x' --silent`
+# {{{2 `x -q'
+_title_ '`x -q'"'"
+o=`'x' -q`
 _check_e_ 0 $?
 _check_o_ '' "$o"
 _pass_
@@ -137,28 +131,25 @@ _check_o_ 'x: `abcdefghijklmnopq'"' too long to max of 16 chars" "$o"
 _pass_
 # }}}2
 
-# {{{2 `x -s' with undeclared alias
-_title_ '`x -s'"' with undeclared alias"
-o=`'x' -s a 2> /dev/null`
-_check_e_ 3 $?
-_check_o_ '' "$o"
-o=`'x' --silent b 2> /dev/null`
+# {{{2 `x -q' with undeclared alias
+_title_ '`x -q'"' with undeclared alias"
+o=`'x' -q a 2> /dev/null`
 _check_e_ 3 $?
 _check_o_ '' "$o"
 _pass_
 # }}}2
 
-# {{{2 `x -s' with invalid alias
-_title_ '`x -s'"' with invalid alias"
-o=`'x' -s "a@" 2>&1`
+# {{{2 `x -q' with invalid alias
+_title_ '`x -q'"' with invalid alias"
+o=`'x' -q "a@" 2>&1`
 _check_e_ 2 $?
 _check_o_ '' "$o"
 _pass_
 # }}}2
 
-# {{{2 `x -s' with too long alias
-_title_ '`x -s'"' with too long alias"
-o=`'x' -s "abcdefghijklmnopq" 2>&1`
+# {{{2 `x -q' with too long alias
+_title_ '`x -q'"' with too long alias"
+o=`'x' -q "abcdefghijklmnopq" 2>&1`
 _check_e_ 3 $?
 _check_o_ '' "$o"
 _pass_
@@ -184,9 +175,9 @@ _check_o_ 'xad: declared already!' "$o"
 o=`'x' a 2> /dev/null`
 _check_e_ 0 $?
 _check_o_ "$p3" "$o"
-o=`'x' -s b 2>&1`
+o=`'x' -q b 2>&1`
 _check_e_ 3 $?
-o=`'x' -s c 2>&1`
+o=`'x' -q c 2>&1`
 _check_e_ 3 $?
 _check_o_ 1 "$('x' -c)"
 _pass_
@@ -302,12 +293,6 @@ _check_e_ 0 $?
 _check_o_ 'xad: replaced' "$o"
 _check_o_ "$p2" "$('x' a 2> /dev/null)"
 _check_o_ 1 "$('x' -c)"
-cd "$p1"
-o=`'xad' --force a 2>&1`
-_check_e_ 0 $?
-_check_o_ 'xad: replaced' "$o"
-_check_o_ "$p1" "$('x' a 2> /dev/null)"
-_check_o_ 1 "$('x' -c)"
 _pass_
 # }}}2
 
@@ -319,63 +304,52 @@ o=`'xad' -f b 2>&1`
 _check_e_ 0 $?
 _check_o_ 'xad: duplicated' "$o"
 _check_o_ 2 "$('x' -c)"
-o=`'xad' --force c 2>&1`
-_check_e_ 0 $?
-_check_o_ 'xad: duplicated' "$o"
-_check_o_ 3 "$('x' -c)"
 _check_o_ "$p3" "$('x' a 2> /dev/null)"
 _check_o_ "$p3" "$('x' b 2> /dev/null)"
-_check_o_ "$p3" "$('x' c 2> /dev/null)"
 _pass_
 # }}}2
 
-# {{{2 `xad -s' without alias
-_title_ '`xad -s'"' without alias"
+# {{{2 `xad -q' without alias
+_title_ '`xad -q'"' without alias"
 cd "$p3"
-o=`'xad' -s 2>&1`
+o=`'xad' -q 2>&1`
 _check_e_ 2 $?
 _pass_
 # }}}2
 
-# {{{2 `xad -s' with invalid alias
-_title_ '`xad -s'"' with invalid alias"
-o=`'xad' -s "a@" 2>&1`
+# {{{2 `xad -q' with invalid alias
+_title_ '`xad -q'"' with invalid alias"
+o=`'xad' -q "a@" 2>&1`
 _check_e_ 3 $?
 _check_o_ '' "$o"
 _pass_
 # }}}2
 
-# {{{2 `xad -s' with too long alias
-_title_ '`xad -s'"' with too long alias"
-o=`'xad' -s "abcdefghijklmnopq" 2>&1`
+# {{{2 `xad -q' with too long alias
+_title_ '`xad -q'"' with too long alias"
+o=`'xad' -q "abcdefghijklmnopq" 2>&1`
 _check_e_ 4 $?
 _check_o_ '' "$o"
 _pass_
 # }}}2
 
-# {{{2 `xad -s' after `xad' on different directories
-_title_ '`xad -s'"' after "'`xad'"' on different directories"
+# {{{2 `xad -q' after `xad' on different directories
+_title_ '`xad -q'"' after "'`xad'"' on different directories"
 cd "$p3"
 o=`'xad' a 2>&1`
 cd "$p2"
-o=`'xad' -s a 2>&1`
+o=`'xad' -q a 2>&1`
 _check_e_ 5 $?
 _check_o_ '' "$o"
-_check_o_ 1 "$('x' -c)"
-cd "$p1"
-o=`'xad' --silent a 2>&1`
-_check_e_ 5 $?
-_check_o_ '' "$o"
-_check_o_ "$p3" "$('x' a 2> /dev/null)"
 _check_o_ 1 "$('x' -c)"
 _pass_
 # }}}2
 
-# {{{2 `xad -s' after `xad' with different aliases
-_title_ '`xad -s'"' after "'`xad'"' with different aliases"
+# {{{2 `xad -q' after `xad' with different aliases
+_title_ '`xad -q'"' after "'`xad'"' with different aliases"
 cd "$p3"
 o=`'xad' a 2>&1`
-o=`'xad' -s b 2>&1`
+o=`'xad' -q b 2>&1`
 _check_e_ 0 $?
 _check_o_ '' "$o"
 _check_o_ 1 "$('x' -c)"
@@ -385,7 +359,7 @@ _check_o_ 'x: undeclared' "$o"
 o=`'x' b 2> /dev/null`
 _check_e_ 0 $?
 _check_o_ "$p3" "$o"
-o=`'xad' --silent c 2>&1`
+o=`'xad' -q c 2>&1`
 _check_e_ 0 $?
 _check_o_ '' "$o"
 _check_o_ 1 "$('x' -c)"
@@ -409,7 +383,7 @@ _test_xrm_() {
 # {{{2 `xrm'
 _title_ '`xrm'"'"
 cd "$p3"
-o=`'xad' -fs a; 'xad' -fs b; 'xad' -fs c; echo 'y
+o=`'xad' -fq a; 'xad' -fq b; 'xad' -fq c; echo 'y
 y
 y' | 'xrm' a b c 2>&1`
 _check_e_ 0 $?
@@ -445,7 +419,7 @@ _pass_
 # {{{2 `xrm' with undeclared alias
 _title_ '`xrm'"' with undeclared alias"
 cd "$p3"
-o=`'xad' -fs a; echo 'y' | 'xrm' a b c 2>&1`
+o=`'xad' -fq a; echo 'y' | 'xrm' a b c 2>&1`
 _check_e_ 5 $?
 _check_o_ 'xrm: non-existant `b'"'
 xrm: non-existant "'`c'"'
@@ -456,7 +430,7 @@ _pass_
 # {{{2 `xrm' with skipped alias
 _title_ '`xrm'"' with skipped alias"
 cd "$p3"
-o=`'xad' -fs a; 'xad' -fs b; echo 'n
+o=`'xad' -fq a; 'xad' -fq b; echo 'n
 y' | 'xrm' a b 2>&1`
 _check_e_ 0 $?
 _check_o_ 'xrm: remove `a'"' for "'`'"${p3}'? ( Yes / No ) xrm: remove "'`b'"'"' for `'"${p3}'? ( Yes / No ) xrm: "'`'"b' removed, "'`'"a' skipped" "$o"
@@ -495,7 +469,7 @@ _pass_
 # {{{2 `xrm -f' with undeclared alias
 _title_ '`xrm -f'"' with undeclared alias"
 cd "$p3"
-o=`'xad' -fs a; 'xrm' -f a b c 2>&1`
+o=`'xad' -fq a; 'xrm' -f a b c 2>&1`
 _check_e_ 0 $?
 _check_o_ 'xrm: non-existant `b'"'
 xrm: non-existant "'`c'"'
@@ -503,43 +477,43 @@ xrm: "'`a'"' removed" "$o"
 _pass_
 # }}}2
 
-# {{{2 `xrm -s' without alias
-_title_ '`xrm -s'"' without alias"
+# {{{2 `xrm -q' without alias
+_title_ '`xrm -q'"' without alias"
 cd "$p3"
-o=`'xrm' -s 2>&1`
+o=`'xrm' -q 2>&1`
 _check_e_ 2 $?
 _pass_
 # }}}2
 
-# {{{2 `xrm -s' with invalid alias
-_title_ '`xrm -s'"' with invalid alias"
-o=`'xrm' -s 'a@' 2>&1`
+# {{{2 `xrm -q' with invalid alias
+_title_ '`xrm -q'"' with invalid alias"
+o=`'xrm' -q 'a@' 2>&1`
 _check_e_ 3 $?
 _check_o_ '' "$o"
 _pass_
 # }}}2
 
-# {{{2 `xrm -s' with too long alias
-_title_ '`xrm -s'"' with too long alias"
-o=`'xrm' -s "abcdefghijklmnopq" 2>&1`
+# {{{2 `xrm -q' with too long alias
+_title_ '`xrm -q'"' with too long alias"
+o=`'xrm' -q "abcdefghijklmnopq" 2>&1`
 _check_e_ 4 $?
 _check_o_ '' "$o"
 _pass_
 # }}}2
 
-# {{{2 `xrm -s' with undeclared alias
-_title_ '`xrm -s'"' with undeclared alias"
+# {{{2 `xrm -q' with undeclared alias
+_title_ '`xrm -q'"' with undeclared alias"
 cd "$p3"
-o=`'xad' -fs a; 'xrm' -s b c 2>&1`
+o=`'xad' -fq a; 'xrm' -q b c 2>&1`
 _check_e_ 5 $?
 _check_o_ '' "$o"
 _pass_
 # }}}2
 
 # {{{2 `xrm' with skipped alias
-_title_ '`xrm -s'"' with skipped alias"
+_title_ '`xrm -q'"' with skipped alias"
 cd "$p3"
-o=`'xad' -fs a; 'xad' -fs b; 'xrm' -s a b 2>&1`
+o=`'xad' -fq a; 'xad' -fq b; 'xrm' -q a b 2>&1`
 _check_e_ 6 $?
 _check_o_ '' "$o"
 _check_o_ 2 "$('x' -c)"

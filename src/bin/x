@@ -96,10 +96,10 @@ Usage: x [OPTION]... [ALIAS]
 List all declared ALIASes, or show the corresponding path to the ALIAS.
 
 Mandatory arguments to long options are mandatory for short options too.
-  -c, --count    display the amount of all declared ALIASes and exit
-  -h, --help     display this help and exit
-  -s, --silent   suppress the heading on listing, or keep silence on error
-  -V, --version  output version information and exit
+  -c             display the amount of all declared ALIASes and exit
+  -s             suppress the heading on listing, or keep silence on error
+      --help     display this help and exit
+      --version  output version information and exit
 
 Exit status:
  0  if OK,
@@ -119,39 +119,27 @@ _x_x_getopts_() {
   local _a _o
   for _o; do
     case "$_o" in
-      --count )
-        _o="-c"
-        ;;
       --help )
-        _o="-h"
-        ;;
-      --silent )
-        _o="-s"
+        X_SUBCMD="help"
+        return
         ;;
       --version )
-        _o="-V"
+        X_SUBCMD="version"
+        return
         ;;
     esac
     _a="$_a $_o"
   done
   set -- $_a
-  while getopts ":chsV" _o; do
+  while getopts ":cq" _o; do
     [ 0 -eq $? ] || {
       X_SUBCMD="help"
       X_PARAMS=1
       return
     }
     case $_o in
-      [cs] )
+      [cq] )
         X_OPTION="${X_OPTION}$_o"
-        ;;
-      h )
-        X_SUBCMD="help"
-        return
-        ;;
-      V )
-        X_SUBCMD="version"
-        return
         ;;
       * )
         _x_warn_ `_x_m_illegal_option_ $OPTARG`
@@ -188,7 +176,7 @@ _x_x_list_() {
         print NR
         exit
       }
-      if ( ! ( "s" in oo ) )
+      if ( ! ( "q" in oo ) )
         print "total " NR
       for ( i in aa )
         print "  " sprintf( "%-16s", i ) "  " aa[ i ]
@@ -199,17 +187,17 @@ _x_x_list_() {
 
 # {{{2 query
 _x_x_query_() {
-  local _e _os
-  [ "x$X_OPTION" = "x"`echo "$X_OPTION" | 'tr' -d 's'` ] || _os=1
+  local _e _oq
+  [ "x$X_OPTION" = "x"`echo "$X_OPTION" | 'tr' -d 'q'` ] || _oq=1
   _x_check_alias_ "$1"
   case $? in
     0 )
       ;;
     3 )
-      _x_halt_ 3 `[ -z $_os ] && _x_m_alias_too_long_ "$1" || echo`
+      _x_halt_ 3 `[ -z "$_oq" ] && _x_m_alias_too_long_ "$1" || echo`
       ;;
     4 )
-      _x_halt_ 2 `[ -z $_os ] && _x_m_invalid_alias_ "$1" || echo`
+      _x_halt_ 2 `[ -z "$_oq" ] && _x_m_invalid_alias_ "$1" || echo`
       ;;
     * )
       _x_halt_ 255
@@ -235,7 +223,7 @@ _x_x_query_() {
     END {
       if ( e )
         exit
-      if ( ! ( "s" in oo ) )
+      if ( ! ( "q" in oo ) )
         print x ": undeclared" > "/dev/stderr"
       exit 3
     }
@@ -266,17 +254,17 @@ X_VERSION
 
 # {{{2 add
 _x_xad_add_() {
-  local _e _os
-  [ "x$X_OPTION" = "x"`echo "$X_OPTION" | 'tr' -d 's'` ] || _os=1
+  local _e _oq
+  [ "x$X_OPTION" = "x"`echo "$X_OPTION" | 'tr' -d 'q'` ] || _oq=1
   _x_check_alias_ "$1"
   case $? in
     0 )
       ;;
     3 )
-      _x_halt_ 4 `[ -z $_os ] && _x_m_alias_too_long_ "$1" || echo`
+      _x_halt_ 4 `[ -z $_oq ] && _x_m_alias_too_long_ "$1" || echo`
       ;;
     4 )
-      _x_halt_ 3 `[ -z $_os ] && _x_m_invalid_alias_ "$1" || echo`
+      _x_halt_ 3 `[ -z $_oq ] && _x_m_invalid_alias_ "$1" || echo`
       ;;
     * )
       _x_halt_ 255
@@ -285,7 +273,7 @@ _x_xad_add_() {
   [ -f $X_CFG ] || 'touch' $X_CFG
   'awk' -v "a=$1" -v "f=${X_CFG}.tmp" -v "p=$PWD" -v "o=$X_OPTION" -v "x=$X_CMD" '
     function scan ( x, y ) {
-      x = "read && echo \"${REPLY}\" | '"'"'tr'"'"' \"[:upper:]\" \"[:lower:]\""
+      x = "read a && echo \"$a\" | '"'"'tr'"'"' \"[:upper:]\" \"[:lower:]\""
       x | getline y
       close( x )
       return substr( y, 1, length( y ) - 1)
@@ -307,21 +295,21 @@ _x_xad_add_() {
     END {
       if ( a in aa ) { # alias exists
         if ( p == aa[ a ] ) { # with same path
-          if ( ! ( "s" in oo ) )
+          if ( ! ( "q" in oo ) )
             print x ": declared already!"
           exit
         }
         # replace ?
         if ( "f" in oo )
           c = "y"
-        else if ( "s" in oo )
+        else if ( "q" in oo )
           c = "n"
         else {
           printf "%s", x ": declared for `" aa[ a ] "'"'"' yet, replace? ( Yes / No ) "
           c = scan()
         }
         if ( "y" != c && "yes" != c ) {
-          if ( ! ( "s" in oo ) )
+          if ( ! ( "q" in oo ) )
             print x ": aborted"
           exit 5
         }
@@ -335,7 +323,7 @@ _x_xad_add_() {
         # duplicate ?
         if ( "f" in oo )
           c = "y"
-        else if ( "s" in oo )
+        else if ( "q" in oo )
           c = "n"
         else {
           i = ""
@@ -367,7 +355,7 @@ _x_xad_add_() {
       for ( i in aa )
         print i, aa[ i ] >> f
       ORS = "\n"
-      if ( ! ( "s" in oo ) )
+      if ( ! ( "q" in oo ) )
         if ( 2 == t )
           print x ": duplicated"
         else if ( 1 == t )
@@ -389,10 +377,10 @@ Usage: xad [OPTION]... ALIAS
 Declare current working directory as ALIAS.
 
 Mandatory arguments to long options are mandatory for short options too.
-  -f, --force    ignore all conferments, never prompt
-  -h, --help     display this help and exit
-  -s, --silent   keep silence
-  -V, --version  output version information and exit
+  -f             ignore all conferments, never prompt
+  -q             keep silence
+      --help     display this help and exit
+      --version  output version information and exit
 
 Exit status:
  0  if OK,
@@ -413,39 +401,27 @@ _x_xad_getopts_() {
   local _a _o
   for _o; do
     case "$_o" in
-      --force )
-        _o="-f"
-        ;;
       --help )
-        _o="-h"
-        ;;
-      --silent )
-        _o="-s"
+        X_SUBCMD="help"
+        return
         ;;
       --version )
-        _o="-V"
+        X_SUBCMD="version"
+        return
         ;;
     esac
     _a="$_a $_o"
   done
   set -- $_a
-  while getopts ":fhsV" _o; do
+  while getopts ":fq" _o; do
     [ 0 -eq $? ] || {
       X_SUBCMD="help"
       X_PARAMS=1
       return
     }
     case $_o in
-      [fs] )
+      [fq] )
         X_OPTION="${X_OPTION}$_o"
-        ;;
-      h )
-        X_SUBCMD="help"
-        return
-        ;;
-      V )
-        X_SUBCMD="version"
-        return
         ;;
       * )
         _x_warn_ `_x_m_illegal_option_ $OPTARG`
@@ -480,10 +456,10 @@ Usage: xrm [OPTION]... ALIAS...
 Remove the ALIAS(es).
 
 Mandatory arguments to long options are mandatory for short options too.
-  -f, --force    ignore all conferments, never prompt
-  -h, --help     display this help and exit
-  -s, --silent   keep silence
-  -V, --version  output version information and exit
+  -f             ignore all conferments, never prompt
+  -q             keep silence
+      --help     display this help and exit
+      --version  output version information and exit
 
 Exit status:
  0  if OK,
@@ -505,39 +481,27 @@ _x_xrm_getopts_() {
   local _a _o
   for _o; do
     case "$_o" in
-      --force )
-        _o="-f"
-        ;;
       --help )
-        _o="-h"
-        ;;
-      --silent )
-        _o="-s"
+        X_SUBCMD="help"
+        return
         ;;
       --version )
-        _o="-V"
+        X_SUBCMD="version"
+        return
         ;;
     esac
     _a="$_a $_o"
   done
   set -- $_a
-  while getopts ":fhsV" _o; do
+  while getopts ":fq" _o; do
     [ 0 -eq $? ] || {
       X_SUBCMD="help"
       X_PARAMS=1
       return
     }
     case $_o in
-      [fs] )
+      [fq] )
         X_OPTION="${X_OPTION}$_o"
-        ;;
-      h )
-        X_SUBCMD="help"
-        return
-        ;;
-      V )
-        X_SUBCMD="version"
-        return
         ;;
       * )
         _x_warn_ `_x_m_illegal_option_ $OPTARG`
@@ -557,19 +521,18 @@ _x_xrm_getopts_() {
 
 # {{{2 remove
 _x_xrm_remove_() {
-  local _a _e _of _os
-  [ "x$X_OPTION" = "x"`echo "$X_OPTION" | 'tr' -d 'f'` ] || _of=1
-  [ "x$X_OPTION" = "x"`echo "$X_OPTION" | 'tr' -d 's'` ] || _os=1
+  local _a _e _oq
+  [ "x$X_OPTION" = "x"`echo "$X_OPTION" | 'tr' -d 'q'` ] || _oq=1
   for _a; do
     _x_check_alias_ "$_a"
     case $? in
       0 )
         ;;
       3 )
-        _x_halt_ 4 `[ -z $_os ] && _x_m_alias_too_long_ "$1" || echo`
+        _x_halt_ 4 `[ -z $_oq ] && _x_m_alias_too_long_ "$1" || echo`
         ;;
       4 )
-        _x_halt_ 3 `[ -z $_os ] && _x_m_invalid_alias_ "$1" || echo`
+        _x_halt_ 3 `[ -z $_oq ] && _x_m_invalid_alias_ "$1" || echo`
         ;;
       * )
         _x_halt_ 255
@@ -594,7 +557,7 @@ _x_xrm_remove_() {
       return v
     }
     function scan ( x, y ) {
-      x = "read && echo \"${REPLY}\" | '"'"'tr'"'"' \"[:upper:]\" \"[:lower:]\""
+      x = "read a && echo \"$a\" | '"'"'tr'"'"' \"[:upper:]\" \"[:lower:]\""
       x | getline y
       close( x )
       return substr( y, 1, length( y ) - 1)
@@ -622,13 +585,13 @@ _x_xrm_remove_() {
         if ( ! ( i in aa ) ) {
           delete a[ i ]
           oo[ "e" ] = 5
-          if ( ! ( "s" in oo ) )
+          if ( ! ( "q" in oo ) )
             print x ": non-existant `" i "'"'"'"
         }
       for ( i in a ) {
         if ( "f" in oo )
           c = "y"
-        else if ( "s" in oo )
+        else if ( "q" in oo )
           c = "n"
         else {
           printf "%s", x ": remove `" i "'"'"' for `" aa[ i ] "'"'"'? ( Yes / No ) "
@@ -643,7 +606,7 @@ _x_xrm_remove_() {
       i = join( a )
       j = join( s )
       if ( ! i ) { # nothing to remove
-        if ( ! ( "s" in oo ) )
+        if ( ! ( "q" in oo ) )
           print x ": aborted"
         if ( j ) # all skipped
           exit 6
@@ -659,7 +622,7 @@ _x_xrm_remove_() {
       x = x ": " i " removed"
       if ( j )
         x = x ", " j " skipped"
-      if ( ! ( "s" in oo ) )
+      if ( ! ( "q" in oo ) )
         print x
       if ( ! ( "f" in oo ) )
         exit oo[ "e" ]
