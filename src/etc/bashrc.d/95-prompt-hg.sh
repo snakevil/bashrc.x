@@ -20,17 +20,22 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-export __BASHRC_X_PROMPT_HG=""
+export __BASHRC_X_PROMPT_HG=("" "")
 
 __BASHRC_X_PROMPT_HG() {
   _p=(1 "")
-  [ "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] \
-    || __BASHRC_X_PROMPT_HG=`'hg' branch 2> /dev/null`
+  [ -z "${__BASHRC_X_PROMPT_HG[1]}" -a "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] \
+    || __BASHRC_X_PROMPT_HG=(
+        `'hg' branch 2> /dev/null`
+        ""
+      )
   [ -z "$__BASHRC_X_PROMPT_HG" ] && {
     'alias' hcd > /dev/null 2>&1 && 'unalias' hcd || return
+    'alias' hg > /dev/null 2>&1 && 'unalias' hg || return
   } || {
     _p[1]="*h\\[\\e[0;32m\\]$__BASHRC_X_PROMPT_HG\\[\\e[1;30m\\]"
     'alias' hcd="cd '`'hg' root 2> /dev/null`'"
+    'alias' hg='__BASHRC_X_PROMPT_HG[1]=1; hg'
   }
 }
 
