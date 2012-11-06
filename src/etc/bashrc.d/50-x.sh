@@ -96,11 +96,11 @@ X_HELP
     'x' --version
     return
   }
-  [ 's' = "s$(echo "$1" | 'tr' -d '[:alnum:]/')" -a -n "${1/\/*/}" ] || {
-    echo 'xcd: invalid `'"$1' with symbols" >&2
+  local _a="${1/\/*/}" _p
+  [ -n "$_a" -a 's' = "s$(echo "$_a" | 'tr' -d '[:alnum:]')" ] || {
+    echo 'xcd: invalid `'"$_a' with symbols" >&2
     return 2
   }
-  local _a="${1/\/*/}" _p
   _p=`'x' -q "$_a"`
   [ 0 -eq $? -a -n "$_p" ] || {
     echo 'xcd: non-existant `'"$_a'" >&2
