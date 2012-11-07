@@ -32,11 +32,11 @@ cd -
 
 ### 执行流程
 
-![执行流程](/snakevil/bashrc.x/master/doc/workflow.png)
+![执行流程](https://raw.github.com/snakevil/bashrc.x/master/doc/workflow.png)
 
 ### 提示字段
 
-![提示案例](/snakevil/bashrc.x/master/doc/prompting-sample.png)
+![提示案例](https://raw.github.com/snakevil/bashrc.x/master/doc/prompting-sample.png)
 
 * `Wed Nov 07` - **日期**
 * <`hg` - **`SUDO`模式扮演用户**
