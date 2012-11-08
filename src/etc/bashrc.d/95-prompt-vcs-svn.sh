@@ -1,4 +1,4 @@
-# ~/.local/bashrc.x/etc/bashrc.d/95-prompt-svn.sh
+# ~/.local/bashrc.x/etc/bashrc.d/95-prompt-vcs-svn.sh
 #
 # This file is part of bashrc.x.
 #
@@ -20,13 +20,16 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-export __BASHRC_X_PROMPT_SVN=""
+[ -n "$__BASHRC_X_PROMPTC_VCS" ] || export __BASHRC_X_PROMPTC_VCS="$Cgreen"
 
-__BASHRC_X_PROMPT_SVN() {
+export __BASHRC_X_PROMPT_VCS_SVN=""
+
+__BASHRC_X_PROMPT_VCS_SVN() {
   _p=(1 "")
   [ "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] \
-    || __BASHRC_X_PROMPT_SVN=`'svn' info > /dev/null 2>&1 && 'echo' trunk`
-  [ -z "$__BASHRC_X_PROMPT_SVN" ] || _p[1]="*s"
+    || __BASHRC_X_PROMPT_VCS_SVN=`'svn' info > /dev/null 2>&1 && 'echo' trunk`
+  [ -z "$__BASHRC_X_PROMPT_VCS_SVN" ] || \
+    _p[1]="\\[$__BASHRC_X_PROMPTC_VCS\\]/s\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
 }
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

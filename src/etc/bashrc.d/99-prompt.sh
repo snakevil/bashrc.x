@@ -28,10 +28,49 @@ export __BASHRC_X_PROMPT_IP=`'ifconfig' 2> /dev/null \
 
 export __BASHRC_X_PROMPT_OLDPWD=""
 
+export __BASHRC_X_PROMPT_PWD="$PWD"
+
+__BASHRC_X_PROMPT_PWD() {
+  local _d
+  case "$PWD" in
+    "$HOME" )
+      _d="~"
+      ;;
+    "$HOME"/* )
+      _d="${PWD/$HOME/~}"
+      ;;
+    * )
+      _d="$PWD"
+      ;;
+  esac
+  _p=(0 "")
+  [ "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] || {
+    __BASHRC_X_PROMPT_PWD=`'echo' "$_d" \
+      | 'gawk' -F'/' '1 < NF {
+          i = "*"
+          j = $1 "/"
+          for ( k = 2; k < NF; k++ ) {
+            l = length( $k )
+            for ( m = 1; m <= l; m++) {
+              n = 0
+              o = "ls -d " j substr( $k, 1, m ) "* 2> /dev/null"
+              while ( 0 < ( o | getline p) ) n++
+              close( o )
+              if ( 1 == n ) break
+            }
+            if ( m + 2 > l ) j = j $k "/"
+            else
+              j = j substr( $k, 1, m ) i "/"
+          }
+          print j $NF
+        }'`
+  }
+}
+
 export __BASHRC_X_PROMPT_PS="$PS1"
 
 __BASHRC_X_PROMPT() {
-  local _e=$? _i _p _s="" _t _x=("" "")
+  local _e=$? _i _p _s _t _x=("" "")
   history -a
   for _t in `'compgen' -A function __BASHRC_X_PROMPT_`; do
     _p=(0 "")
@@ -47,14 +86,18 @@ __BASHRC_X_PROMPT() {
       esac
     }
   done
-  [ 0 -eq $_e ] \
-    || _x[1]="${_x[1]} e\\[\\e[1;31m\\]$_e\\[\\e[0m\\e[1;30m\\]"
   [ -z "$__BASHRC_X_PROMPT_PWD" ] \
     || _s="s/\\\\w/${__BASHRC_X_PROMPT_PWD////\\/}/g"
+  [ 0 -eq $_e ] || {
+    _x[1]="${_x[1]} \\[$__BASHRC_X_PROMPTC_DEFAULT\\]e"
+    _x[1]="${_x[1]}\\[$__BASHRC_X_PROMPTC_EXIT\\]$_e"
+    _x[1]="${_x[1]}\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
+  }
   [ -z "${_x[0]}" ] || {
     _s="$_s;s<><${_x[0]//\\/\\\\}><"
   }
   [ -z "${_x[1]}" ] || {
+    _x[1]="${_x[1]:1}"
     _s="$_s;s>] >${_x[1]//\\/\\\\}] >"
   }
   [ -z "$_s" ] || PS1=`'echo' "$__BASHRC_X_PROMPT_PS" | 'sed' -e "$_s"`

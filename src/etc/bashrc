@@ -41,11 +41,9 @@ for _ii_ in ~/.local/bashrc.x/etc/bashrc.d/[0-9][0-9]-*.sh; do
   [ ! -r $_ii_ ] || . $_ii_
 done
 
-[ ! -d ~/.bashrc.x ] || {
-  for _ii_ in ~/.bashrc.x/*.rc; do
-    [ ! -r $_ii_ ] || . $_ii_
-  done
-}
+for _ii_ in ~/.bashrc.x/[0-9][0-9]-*.sh; do
+  [ ! -r $_ii_ ] || . $_ii_
+done
 unset -v _ii_ _jj_ _kk_
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

@@ -20,6 +20,12 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
+[ -n "$__BASHRC_X_PROMPTC_LOAD" ] || {
+  export __BASHRC_X_PROMPTC_LOAD="$Chgreen"
+  export __BASHRC_X_PROMPTC_LOAD2="$Chyellow"
+  export __BASHRC_X_PROMPTC_LOAD3="$Chred"
+}
+
 export __BASHRC_X_PROMPT_LOAD=(0.00 0)
 
 __BASHRC_X_PROMPT_LOAD() {
@@ -32,19 +38,20 @@ __BASHRC_X_PROMPT_LOAD() {
         | 'awk' '{split($2,x,",");print x[1]}'`
       $_t
     )
-  _p[1]="${_p[1]} l\\["
+  _p[1]=" \\[$__BASHRC_X_PROMPTC_DEFAULT\\]l"
   case "${__BASHRC_X_PROMPT_LOAD[0]}" in
     0.0? )
-      _p[1]="${_p[1]}\\e[1;32m\\]"
+      _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_LOAD\\]"
       ;;
     0.?? )
-      _p[1]="${_p[1]}\\e[1;33m\\]"
+      _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_LOAD2\\]"
       ;;
     * )
-      _p[1]="${_p[1]}\\e[1;31m\\]"
+      _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_LOAD3\\]"
       ;;
   esac
-  _p[1]="${_p[1]}${__BASHRC_X_PROMPT_LOAD[0]}\\[\\e[0m\\e[1;30m\\]"
+  _p[1]="${_p[1]}${__BASHRC_X_PROMPT_LOAD[0]}"
+  _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
 }
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

@@ -20,13 +20,15 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
+[ -n "$__BASHRC_X_PROMPTC_TC" ] || export __BASHRC_X_PROMPTC_TC="$Cwhite"
+
 __BASHRC_X_PROMPT_TIME_CONSUMED() {
   _p=(2 "")
   local _t=`'echo' $('date' +%s.%N) $__BASHRC_X_CHECKPOINT \
     | 'awk' '{
         z = $1 - $2
         split( z % 60, y, "." )
-        n = substr( y[2], 1, 3 )
+        n = substr( y[2], 1, 2 )
         s = y[1] "s"
         d = h = m = ""
         x = int( z / 60 )
@@ -45,7 +47,9 @@ __BASHRC_X_PROMPT_TIME_CONSUMED() {
         else if ( length( m ) ) print m s n
         else print s n
       }'`
-  _p[1]=" c\\[\\e[0;37m\\]$_t\\[\\e[0m\\e[1;30m\\]"
+  _p[1]=" \\[$__BASHRC_X_PROMPTC_DEFAULT\\]c"
+  _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_TC\\]$_t"
+  _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
 }
 
 # REF # http://www.twistedmatrix.com/users/glyph/preexec.bash.txt

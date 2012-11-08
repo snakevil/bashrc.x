@@ -1,4 +1,4 @@
-# ~/.local/bashrc.x/etc/bashrc.d/95-prompt-hg.sh
+# ~/.local/bashrc.x/etc/bashrc.d/95-prompt-vcs-git.sh
 #
 # This file is part of bashrc.x.
 #
@@ -20,22 +20,26 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-export __BASHRC_X_PROMPT_HG=("" "")
+[ -n "$__BASHRC_X_PROMPTC_VCS" ] || export __BASHRC_X_PROMPTC_VCS="$Cgreen"
 
-__BASHRC_X_PROMPT_HG() {
+export __BASHRC_X_PROMPT_VCS_GIT=("" "")
+
+__BASHRC_X_PROMPT_VCS_GIT() {
   _p=(1 "")
-  [ -z "${__BASHRC_X_PROMPT_HG[1]}" -a "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] \
-    || __BASHRC_X_PROMPT_HG=(
-        `'hg' branch 2> /dev/null`
+  [ -z "${__BASHRC_X_PROMPT_VCS_GIT[1]}" -a "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] \
+    || __BASHRC_X_PROMPT_VCS_GIT=(
+        `'git' symbolic-ref HEAD 2> /dev/null | 'awk' -F'/' '{print $3}'`
         ""
       )
-  [ -z "$__BASHRC_X_PROMPT_HG" ] && {
-    'alias' hcd > /dev/null 2>&1 && 'unalias' hcd || return
-    'alias' hg > /dev/null 2>&1 && 'unalias' hg || return
+  [ -z "${__BASHRC_X_PROMPT_VCS_GIT[0]}" ] && {
+    'alias' gcd > /dev/null 2>&1 && 'unalias' gcd || return
+    'alias' git > /dev/null 2>&1 && 'unalias' git || return
   } || {
-    _p[1]="*h\\[\\e[0;32m\\]$__BASHRC_X_PROMPT_HG\\[\\e[1;30m\\]"
-    'alias' hcd="cd '`'hg' root 2> /dev/null`'"
-    'alias' hg='__BASHRC_X_PROMPT_HG[1]=1; hg'
+    _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]/g"
+    _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_VCS\\]${__BASHRC_X_PROMPT_VCS_GIT[0]}"
+    _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
+    'alias' gcd="cd '$('git' rev-parse --show-toplevel 2> /dev/null)'"
+    'alias' git='__BASHRC_X_PROMPT_VCS_GIT[1]=1; git'
   }
 }
 

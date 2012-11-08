@@ -36,6 +36,8 @@ cd -
 
 ### 提示字段
 
+动态提示内容的修正，由 [etc/bashrc.d/99-prompt.sh](/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/99-prompt.sh) 完成。
+
 ![提示案例](https://raw.github.com/snakevil/bashrc.x/master/doc/prompting-sample.png)
 
 * `Wed Nov 07` - **日期**
@@ -46,11 +48,30 @@ cd -
 * /`g` - **当前目录版本库类型**
 * `master`> - **当前目录版本库分支名**
 * `16:20` - **时间**
-* i`15` - **指令历史序号**
 * j`1` - **后台保持任务数**
 * l`0.69` - **系统负载**
 * c`0s679` - **上条指令执行时间**
 * e`148` - **上条指令退出码**
+
+#### 颜色调整
+
+提示所用的颜色变量共18种，由 [etc/bashrc.d/05-colors.sh](/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/05-colors.sh) 定义。
+
+如需更改提示颜色，需创建`~/.bashrc.x/colors.rc`配置文件，定义不同提示字段的颜色。
+
+`Bashrc.X`已定义的提示颜色有：
+
+* `$__BASHRC_X_PROMPTC_DEFAULT` - **提示默认色**，默认为`$Chblack`
+* `$__BASHRC_X_PROMPTC_USER` - **用户字段色**，默认为`$Ccyan`
+* `$__BASHRC_X_PROMPTC_SUSER` - **`SUDO`模式扮演用户字段色**，默认为`$Cred`
+* `$__BASHRC_X_PROMPTC_IP` - **`IP`字段色**，默认为`$Cpurple`
+* `$__BASHRC_X_PROMPTC_PWD` - **当前目录路径字段色**，默认为`$Cyellow`
+* `$__BASHRC_X_PROMPTC_VCS` - **当前目录版本库分支字段色**，默认为`$Cgreen`
+* `$__BASHRC_X_PROMPTC_LOAD` - **负载字段默认色**，默认为`$Chgreen`
+* `$__BASHRC_X_PROMPTC_LOAD2` - **负载字段（0.1-1）阶段色**，默认为`$Chyellow`
+* `$__BASHRC_X_PROMPTC_LOAD3` - **负载字段（1-）阶段色**，默认为`$Chred`
+* `$__BASHRC_X_PROMPTC_TC` - **上条指令执行时间字段色**，默认为`$Cwhite`
+* `$__BASHRC_X_PROMPTC_EXIT` - **上条指令退出码字段色**，默认为`$Chred`
 
 ###### Copyright © 2012 [Snakevil Zen][me]. ALL RIGHTS RESERVED.
 

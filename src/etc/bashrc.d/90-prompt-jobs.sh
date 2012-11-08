@@ -20,10 +20,15 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
+[ -n "$__BASHRC_X_PROMPTC_JOBS" ] || export __BASHRC_X_PROMPTC_JOBS="$Chwhite"
+
 __BASHRC_X_PROMPT_JOBS() {
   _p=(2 "")
-  [ -z "$('jobs' -p)" ] \
-    || _p[1]=" j\\[\\e[1;37m\\]\\j\\[\\e[0m\\e[1;30m\\]"
+  [ -z "$('jobs' -p)" ] || {
+    _p[1]=" \\[$__BASHRC_X_PROMPTC_DEFAULT\\]j"
+    _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_JOBS\\]\\j"
+    _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
+  }
 }
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:
