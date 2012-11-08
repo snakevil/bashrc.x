@@ -34,6 +34,36 @@ cd -
 'rm' -fr ~/.bash_profile ~/.bashrc ~/.local/bashrc.x ~/.local/bashrc.x.git
 ```
 
+功能简介
+--------
+
+### 执行流程 ###
+
+![执行流程](https://raw.github.com/snakevil/bashrc.x/master/doc/workflow.png)
+
+如图所示，`Bashrc.X`默认的`etc/bashrc.d`目录下的`[0-9][0-9]-*.sh`脚本，和
+`~/.bashrc.x/bashrc.d`目录下的同规则文件，会按照先文件名、后目录（`Bashrc.X`默认
+脚本优先）的方式排序，并依此执行。
+
+### 提示字段 ###
+
+动态提示内容的修正，由 [etc/bashrc.d/99-prompt.sh](/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/99-prompt.sh) 完成。
+
+![提示案例](https://raw.github.com/snakevil/bashrc.x/master/doc/prompting-sample.png)
+
+* `Wed Nov 08` - **日期**
+* <`root` - **`SUDO` 模式扮演用户**
+* (`snakevil`) - **登录用户**
+* @`.94.32` - **`IP` 后两段**
+* :`/h*/s*/Doc*/P*/ba*/s*/e*/bashrc.d` - **当前目录路径 _（压缩版）_ **
+* /`g` - **当前目录版本库类型**
+* `master`> - **当前目录版本库分支名**
+* `10:26` - **时间**
+* j`1` - **后台保持任务数**
+* l`1.15` - **系统负载**
+* c`0s54` - **上条指令执行时间**
+* e`148` - **上条指令退出码**
+
 个性定制
 --------
 
@@ -57,31 +87,47 @@ cd -
 * `$__BASHRC_X_PROMPTC_TC` - **上条指令执行时间字段色**，默认为`$Cwhite`
 * `$__BASHRC_X_PROMPTC_EXIT` - **上条指令退出码字段色**，默认为`$Chred`
 
-功能简介
---------
+### 功能扩展 ###
 
-### 执行流程 ###
+在`~/.bashrc.x/bashrc.d`目录下创建文件名称符合`[0-9][0-9]-*.sh`规则的脚本。从下
+次开始启动命令行，其中的脚本内容就会作为定制的功能扩展执行了。
 
-![执行流程](https://raw.github.com/snakevil/bashrc.x/master/doc/workflow.png)
+### 提示插件 ###
 
-### 提示字段 ###
+在`Bashrc.X`中，提示插件也以功能扩展脚本的形式实现。但为了使定制的提示插件能够完
+美工作，还需要注意以下两点：
 
-动态提示内容的修正，由 [etc/bashrc.d/99-prompt.sh](/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/99-prompt.sh) 完成。
+#### 1. 插件内容显示位置 ####
 
-![提示案例](https://raw.github.com/snakevil/bashrc.x/master/doc/prompting-sample.png)
+![插件位置](https://raw.github.com/snakevil/bashrc.x/master/doc/plugins-positions.png)
 
-* `Wed Nov 08` - **日期**
-* <`root` - **`SUDO` 模式扮演用户**
-* (`snakevil`) - **登录用户**
-* @`.94.32` - **`IP` 后两段**
-* :`/h*/s*/Doc*/P*/ba*/s*/e*/bashrc.d` - **当前目录路径 _（压缩版）_ **
-* /`g` - **当前目录版本库类型**
-* `master`> - **当前目录版本库分支名**
-* `10:26` - **时间**
-* j`1` - **后台保持任务数**
-* l`1.15` - **系统负载**
-* c`0s54` - **上条指令执行时间**
-* e`148` - **上条指令退出码**
+#### 2. 插件定义函数规范 ####
+
+1. 文件名
+
+    为了兼容性，我们建议插件的文件名应该符合`9[0-8]-prompt-*.sh`规则。
+
+2. 函数名
+
+    函数名应该符合`__BASHRC_X_PROMPT_*`规则。请尽量使用更有语义的名字，以免造成
+    既有插件工作不正常，或该插件自身工作不正常。
+
+3. 函数输出
+
+    鉴于 [BASH][] 的函数定义无法直接返回需要的结果，我们使用特殊数组变量`_p`作为
+    返回结果变量。
+
+    ```shell
+    _p=(
+      1  # 控制内容显示位置。可选值为“1”或“2”，分别对应当前工作目录后的位置，和
+         # 提示符前的位置。
+      "" # 控制内容，包括颜色定义。
+    )
+    ```
+
+如有需要，请阅读范例：
+[etc/bashrc.d/90-prompt-jobs.sh](/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/90-prompt-jobs.sh)
+。
 
 ###### Copyright © 2012 [Snakevil Zen][me]. ALL RIGHTS RESERVED. ######
 

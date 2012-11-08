@@ -36,6 +36,40 @@ cd -
 'rm' -fr ~/.bash_profile ~/.bashrc ~/.local/bashrc.x ~/.local/bashrc.x.git
 ```
 
+Architecture Details
+--------------------
+
+### Execution Workflow ###
+
+![Execution Workflow](https://raw.github.com/snakevil/bashrc.x/master/doc/workflow.png)
+
+As the image shown, scripting files matched `[0-9][0-9]-*.sh` in the folder
+`etc/bashrc.d` of `Bashrc.X` should be merged with the familar scripting files
+in the folder `~/.bashrc.x/bashrc.d`, sorted by filenames, and then execute.
+
+Notice that the default scripting files inside `Bashrc.x` have the higher
+priority.
+
+### PROMPTing Fields ###
+
+Dynamic PROMPTing contents would be generated and merged by
+[etc/bashrc.d/99-prompt.sh](/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/99-prompt.sh).
+
+![PROMPTing Sample](https://raw.github.com/snakevil/bashrc.x/master/doc/prompting-sample.png)
+
+* `Wed Nov 08` - **Date**
+* <`root` - **Effective user in `SUDO` mode**
+* (`snakevil`) - **Login user**
+* @`.94.32` - **Last 2 parts of `IP`**
+* :`/h*/s*/Doc*/P*/ba*/s*/e*/bashrc.d` - **`CWD`_(compressed)_ **
+* /`g` - **Repository type at `CWD`**
+* `master`> - **Repository branch at `CWD`**
+* `10:26` - **Time**
+* j`1` - **Jobs in background**
+* l`1.15` - **Load**
+* c`0s54` - **Time consumed by last command**
+* e`148` - **Exit code of last command**
+
 Customization
 -------------
 
@@ -62,33 +96,48 @@ Colors defeind by `Bashrc.X`:
 * `$__BASHRC_X_PROMPTC_TC` - **Time consumed color by last command**, defaults as `$Cwhite`
 * `$__BASHRC_X_PROMPTC_EXIT` - **Exit code color of last command**, defaults as `$Chred`
 
+### Extensions ###
 
-Architecture Details
---------------------
+What you need is to create scripting files named alike `[0-9][0-9]-*.sh` in the
+folder `~/.bashrc.x/bashrc.d`. And then, the scripts should be executed
+everytime you open the terminal.
 
-### Execution Workflow ###
+### PROMPting Plugins ###
 
-![Execution Workflow](https://raw.github.com/snakevil/bashrc.x/master/doc/workflow.png)
+PROMPTing plugins are a special kind of extensions in `Bashrc.X`. For most
+perfect experience, we should know the following 2 instructions:
 
-### PROMPTing Fields ###
+#### 1. Where could plugins display? ####
 
-Dynamic PROMPTing contents would be generated and merged by
-[etc/bashrc.d/99-prompt.sh](/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/99-prompt.sh).
+![Plugins Positions](https://raw.github.com/snakevil/bashrc.x/master/doc/plugins-positions.png)
 
-![PROMPTing Sample](https://raw.github.com/snakevil/bashrc.x/master/doc/prompting-sample.png)
+#### 2. How plugins declared? ####
 
-* `Wed Nov 08` - **Date**
-* <`root` - **Effective user in `SUDO` mode**
-* (`snakevil`) - **Login user**
-* @`.94.32` - **Last 2 parts of `IP`**
-* :`/h*/s*/Doc*/P*/ba*/s*/e*/bashrc.d` - **`CWD`_(compressed)_ **
-* /`g` - **Repository type at `CWD`**
-* `master`> - **Repository branch at `CWD`**
-* `10:26` - **Time**
-* j`1` - **Jobs in background**
-* l`1.15` - **Load**
-* c`0s54` - **Time consumed by last command**
-* e`148` - **Exit code of last command**
+1. Filename
+
+    For most compatibility, we strongly recommend the filename should match the
+    rule `9[0-8]-prompt-*.sh`.
+
+2. Function
+
+    Function name should be named alike `__BASHRC_X_PROMPT_*`. Give it a more
+    unique name, for all declared plugins could work fine.
+
+3. Return value
+
+    For functions in [BASH][] could not return values directly, we chosen the
+    special array variable `_p` to act as the return parameter.
+
+    ```shell
+    _p=(
+      1  # Controls the display position. '1' or '2' available, for the position
+         # after CWD, or before the prompting symbol.
+      "" # Controls the content including colors.
+    )
+    ```
+
+For more information, please read the sample:
+[etc/bashrc.d/90-prompt-jobs.sh](/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/90-prompt-jobs.sh).
 
 ###### Copyright © 2012 [Snakevil Zen][me]. ALL RIGHTS RESERVED. ######
 

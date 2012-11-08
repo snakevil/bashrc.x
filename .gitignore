@@ -1,2 +1,8 @@
 .*
 !.gitignore
+*~
+*.bak
+*.o
+*.tmp
+demo.*
+test.*

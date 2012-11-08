@@ -37,13 +37,16 @@ shopt -s histappend
 set -o functrace
 shopt -s extdebug
 
-for _ii_ in ~/.local/bashrc.x/etc/bashrc.d/[0-9][0-9]-*.sh; do
-  [ ! -r $_ii_ ] || . $_ii_
+for _ii_ in $(for _ii_ in ~/.local/bashrc.x/etc/bashrc.d/[0-9][0-9]-*.sh \
+    ~/.bashrc.x/bashrc.d/[0-9][0-9]-*.sh; do
+    [ ! -r "$_ii_" ] || {
+      printf "%-256s" `'basename' "$_ii_"`
+      echo "$_ii_"
+    }
+  done | 'sort' -k'1,1' -k'2r' | 'cut' -b'257-'); do
+  . "$_ii_"
 done
 
-for _ii_ in ~/.bashrc.x/[0-9][0-9]-*.sh; do
-  [ ! -r $_ii_ ] || . $_ii_
-done
 unset -v _ii_ _jj_ _kk_
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:
