@@ -20,7 +20,7 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-export __BASHRC_X_PROMPTC_DEFAULT="$Cnone$Chblack"
+export __BASHRC_X_PROMPTC_DEFAULT="$Chblack"
 export __BASHRC_X_PROMPTC_USER="$Ccyan"
 export __BASHRC_X_PROMPTC_SUSER="$Cred"
 export __BASHRC_X_PROMPTC_IP="$Cpurple"
@@ -41,7 +41,7 @@ PS1="\\n\\[$Cnone$__BASHRC_X_PROMPTC_DEFAULT\\]\\d <"
 }
 PS1="$PS1\\[$__BASHRC_X_PROMPTC_IP\\]\\h\\[$__BASHRC_X_PROMPTC_DEFAULT\\]:"
 PS1="$PS1\\[$__BASHRC_X_PROMPTC_PWD\\]\\w\\[$__BASHRC_X_PROMPTC_DEFAULT\\]>\\n"
-PS1="$PS1\\A [] \\$\\[$Cnone\\] "
+PS1="$PS1\\[$__BASHRC_X_PROMPTC_DEFAULT\\]\\A [] \\$\\[$Cnone\\] "
 case "$TERM" in
   *xterm* | rxvt )
     [ -n "$SUDO_USER" ] \

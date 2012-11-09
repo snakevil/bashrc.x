@@ -47,9 +47,8 @@ __BASHRC_X_PROMPT_TIME_CONSUMED() {
         else if ( length( m ) ) print m s n
         else print s n
       }'`
-  _p[1]=" \\[$__BASHRC_X_PROMPTC_DEFAULT\\]c"
+  _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]c"
   _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_TC\\]$_t"
-  _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
 }
 
 # REF # http://www.twistedmatrix.com/users/glyph/preexec.bash.txt

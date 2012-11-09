@@ -38,7 +38,7 @@ __BASHRC_X_PROMPT_LOAD() {
         | 'awk' '{split($2,x,",");print x[1]}'`
       $_t
     )
-  _p[1]=" \\[$__BASHRC_X_PROMPTC_DEFAULT\\]l"
+  _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]l"
   case "${__BASHRC_X_PROMPT_LOAD[0]}" in
     0.0? )
       _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_LOAD\\]"
@@ -51,7 +51,6 @@ __BASHRC_X_PROMPT_LOAD() {
       ;;
   esac
   _p[1]="${_p[1]}${__BASHRC_X_PROMPT_LOAD[0]}"
-  _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
 }
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

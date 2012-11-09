@@ -37,7 +37,6 @@ __BASHRC_X_PROMPT_VCS_GIT() {
   } || {
     _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]/g"
     _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_VCS\\]${__BASHRC_X_PROMPT_VCS_GIT[0]}"
-    _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
     'alias' gcd="cd '$('git' rev-parse --show-toplevel 2> /dev/null)'"
     'alias' git='__BASHRC_X_PROMPT_VCS_GIT[1]=1; git'
   }

@@ -37,7 +37,6 @@ __BASHRC_X_PROMPT_VCS_HG() {
   } || {
     _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]/h"
     _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_VCS\\]${__BASHRC_X_PROMPT_VCS_HG[0]}"
-    _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
     'alias' hcd="cd '`'hg' root 2> /dev/null`'"
     'alias' hg='__BASHRC_X_PROMPT_VCS_HG[1]=1; hg'
   }
