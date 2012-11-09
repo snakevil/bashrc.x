@@ -29,6 +29,8 @@ export INPUTRC=~/.local/bashrc.x/etc/inputrc
   export LC_ALL=en_US.UTF-8
 }
 
+[ -d ~/.bashrc.x ] || 'mkdir' ~/.bashrc.x
+
 PATH="/usr/sbin:/usr/bin:/sbin:/bin"
 MANPATH='/usr/share/man'
 [ -d /usr/local ] && {
@@ -45,8 +47,7 @@ MANPATH='/usr/share/man'
 }
 [ -d ~/.local/bashrc.x ] \
   && PATH="$HOME/.local/bashrc.x/sbin:$HOME/.local/bashrc.x/bin:$PATH"
-[ -d ~/.bashrc.x ] \
-  && PATH="$HOME/.bashrc.x/sbin:$HOME/.bashrc.x/bin:$PATH"
+PATH="$HOME/.bashrc.x/sbin:$HOME/.bashrc.x/bin:$PATH"
 export PATH
 export MANPATH
 
