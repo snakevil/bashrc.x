@@ -141,7 +141,6 @@ _xcd() {
     _l=(`'compgen' -d -- "$_t"`)
     [ 1 -eq ${#_l[@]} ] || {
       [ 0 -eq ${#_l[@]} ] && {
-        _t="${_t%/}"
         _t="${_t/$_p/$_a}"
         [ "s$_t" = "s$2" ] && COMPREPLY=() || COMPREPLY=("$_t")
       } || COMPREPLY=(${_l[@]/$_p/$_a})

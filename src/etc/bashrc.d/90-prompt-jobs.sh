@@ -24,6 +24,7 @@
 
 __BASHRC_X_PROMPT_JOBS() {
   _p=(2 "")
+  [ -n "${__BASHRC_X_CONFIG[prompt.jobs]}" ] || return
   [ -z "$('jobs' -p)" ] || {
     _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]j"
     _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_JOBS\\]\\j"

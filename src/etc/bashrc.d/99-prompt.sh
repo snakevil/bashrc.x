@@ -20,11 +20,13 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-export __BASHRC_X_PROMPT_IP=`'ifconfig' 2> /dev/null \
-  | 'awk' '!x&&/inet /&&!/127\./{x=1;split($2,y,".");print "."y[3]"."y[4]}'`
-
-[ -z "$__BASHRC_X_PROMPT_IP" ] \
-  || PS1=`'echo' "$PS1" | 'sed' -e 's/\\\\h/'"$__BASHRC_X_PROMPT_IP/g"`
+export __BASHRC_X_PROMPT_IP=(
+  `'ifconfig' 2> /dev/null | 'awk' '!x&&/inet /&&!/127\./{x=1;print $2}'`
+  ''
+)
+[ -z "${__BASHRC_X_PROMPT_IP[0]}" ] \
+  || __BASHRC_X_PROMPT_IP[1]=`echo "${__BASHRC_X_PROMPT_IP[0]}" \
+    | 'awk' -F. '{print $3, $4}'`
 
 export __BASHRC_X_PROMPT_OLDPWD=""
 
@@ -44,6 +46,10 @@ __BASHRC_X_PROMPT_PWD() {
       ;;
   esac
   _p=(0 "")
+  [ -n "${__BASHRC_X_CONFIG[prompt.pwd.compressed]}" ] || {
+    __BASHRC_X_PROMPT_PWD="$_d"
+    return
+  }
   [ "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] || {
     __BASHRC_X_PROMPT_PWD=`'echo' "$_d" \
       | 'gawk' -F'/' '1 < NF {
@@ -88,19 +94,30 @@ __BASHRC_X_PROMPT() {
       esac
     }
   done
-  [ -z "$__BASHRC_X_PROMPT_PWD" ] \
-    || _s="s/\\\\w/${__BASHRC_X_PROMPT_PWD////\\/}/g"
-  [ 0 -eq $_e ] || {
-    _x[1]="${_x[1]} \\[$__BASHRC_X_PROMPTC_DEFAULT\\]e"
-    _x[1]="${_x[1]}\\[$__BASHRC_X_PROMPTC_EXIT\\]$_e"
-    _x[1]="${_x[1]}\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
+  [ -z "$__BASHRC_X_PROMPT_IP" ] \
+    || [ -z "${__BASHRC_X_CONFIG[prompt.ip.cut]}" ] \
+      && _s="s/\\\\h/${__BASHRC_X_PROMPT_IP[0]}/g;" \
+      || _s="s/\\\\h/${__BASHRC_X_PROMPT_IP[1]}/g;"
+  [ -z "${__BASHRC_X_CONFIG[prompt.pwd.compressed]}" ] \
+    || [ -z "$__BASHRC_X_PROMPT_PWD" ] \
+      || _s="${_s}s/\\\\w/${__BASHRC_X_PROMPT_PWD//\//\\/}/g;"
+  [ -z "${__BASHRC_X_CONFIG[prompt.exit]}" ] || {
+    [ 0 -eq $_e ] || {
+      _x[1]="${_x[1]} \\[$__BASHRC_X_PROMPTC_DEFAULT\\]e"
+      _x[1]="${_x[1]}\\[$__BASHRC_X_PROMPTC_EXIT\\]$_e"
+      _x[1]="${_x[1]}\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
+    }
   }
   [ -z "${_x[0]}" ] || {
-    _s="$_s;s<><${_x[0]//\\/\\\\}><"
+    _x[0]="${_x[0]//\\/\\\\}"
+    _s="${_s}s/>\\\\n/${_x[0]//\//\\/}>\\\\n/;"
   }
-  [ -z "${_x[1]}" ] || {
+  [ -z "${_x[1]}" ] && {
+    _s="${_s}s/ \\[\\] / /;"
+  } || {
     _x[1]="${_x[1]:1}"
-    _s="$_s;s>] >${_x[1]//\\/\\\\}] >"
+    _x[1]="${_x[1]//\\/\\\\}"
+    _s="${_s}s/\\[\\] /\\[${_x[1]//\//\\/}\\] /;"
   }
   [ -z "$_s" ] || PS1=`'echo' "$__BASHRC_X_PROMPT_PS" | 'sed' -e "$_s"`
   __BASHRC_X_PROMPT_OLDPWD="$PWD"

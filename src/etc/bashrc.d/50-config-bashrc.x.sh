@@ -1,4 +1,4 @@
-# ~/.local/bashrc.x/etc/bashrc.d/95-prompt-vcs-svn.sh
+# ~/.local/bashrc.x/etc/bashrc.d/50-config-bashrc.x.sh
 #
 # This file is part of bashrc.x.
 #
@@ -20,19 +20,38 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-[ -n "$__BASHRC_X_PROMPTC_VCS" ] || export __BASHRC_X_PROMPTC_VCS="$Cgreen"
-
-export __BASHRC_X_PROMPT_VCS_SVN=""
-
-__BASHRC_X_PROMPT_VCS_SVN() {
-  _p=(1 "")
-  [ -n "${__BASHRC_X_CONFIG[prompt.vcs]}" ] || return
-  [ "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] \
-    || __BASHRC_X_PROMPT_VCS_SVN=`'svn' info > /dev/null 2>&1 && 'echo' trunk`
-  [ -z "$__BASHRC_X_PROMPT_VCS_SVN" ] || {
-    _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
-    _p[1]="${_p[1]}${__BASHRC_X_CONFIG[prompt.vcs.delim]}s"
+config-bashrc.x() {
+  local _c=`'which' 'config-bashrc.x' 2>/dev/null` _e _s
+  "$_c" "$@"
+  _e=$?
+  [ 0 -eq $# -o 's-' = "s${1:0:1}" -a 's-d' != "s$1" ] || {
+    __BASHRC_X_PROMPT_OLDPWD=''
+    'eval' "$("$_c" -e | 'grep' -v '^declare')"
   }
+  return $_e
 }
+
+_config_bashrcx() {
+  COMPREPLY=()
+  [ "$1" = "$3" ] || {
+    case "$3" in
+      -l )
+        COMPREPLY=( '-a' )
+        ;;
+      -d )
+        COMPREPLY=(`'compgen' -W "$(
+            'config-bashrc.x' -l | 'awk' '{print $1}'
+          )" -- "$2"`)
+        ;;
+    esac
+    return
+  }
+  COMPREPLY=(`'compgen' -W " --help --version $(
+      'config-bashrc.x' -la | 'awk' '{print $1}'
+    ) -d -e -l " -- "$2"`)
+}
+'complete' -F _config_bashrcx config-bashrc.x
+
+'eval' `'config-bashrc.x' -e`
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

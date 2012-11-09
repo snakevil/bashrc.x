@@ -26,6 +26,7 @@ export __BASHRC_X_PROMPT_VCS_HG=("" "")
 
 __BASHRC_X_PROMPT_VCS_HG() {
   _p=(1 "")
+  [ -n "${__BASHRC_X_CONFIG[prompt.vcs]}" ] || return
   [ -z "${__BASHRC_X_PROMPT_VCS_HG[1]}" -a "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] \
     || __BASHRC_X_PROMPT_VCS_HG=(
         `'hg' branch 2> /dev/null`
@@ -35,7 +36,8 @@ __BASHRC_X_PROMPT_VCS_HG() {
     'alias' hcd > /dev/null 2>&1 && 'unalias' hcd || return
     'alias' hg > /dev/null 2>&1 && 'unalias' hg || return
   } || {
-    _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]/h"
+    _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
+    _p[1]="${_p[1]}${__BASHRC_X_CONFIG[prompt.vcs.delim]}h"
     _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_VCS\\]${__BASHRC_X_PROMPT_VCS_HG[0]}"
     'alias' hcd="cd '`'hg' root 2> /dev/null`'"
     'alias' hg='__BASHRC_X_PROMPT_VCS_HG[1]=1; hg'

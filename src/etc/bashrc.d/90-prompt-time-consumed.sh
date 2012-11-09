@@ -24,6 +24,7 @@
 
 __BASHRC_X_PROMPT_TIME_CONSUMED() {
   _p=(2 "")
+  [ -n "${__BASHRC_X_CONFIG[prompt.time-consumed]}" ] || return
   local _t=`'echo' $('date' +%s.%N) $__BASHRC_X_CHECKPOINT \
     | 'awk' '{
         z = $1 - $2

@@ -30,6 +30,7 @@ export __BASHRC_X_PROMPT_LOAD=(0.00 0)
 
 __BASHRC_X_PROMPT_LOAD() {
   _p=(2 "")
+  [ -n "${__BASHRC_X_CONFIG[prompt.load]}" ] || return
   local _t=`'date' +%s`
   [ $_t -lt `'expr' ${__BASHRC_X_PROMPT_LOAD[1]} + 30` ] \
     || __BASHRC_X_PROMPT_LOAD=(
