@@ -100,7 +100,8 @@ __BASHRC_X_PROMPT() {
       || _s="s/\\\\h/${__BASHRC_X_PROMPT_IP[1]}/g;"
   [ -z "${__BASHRC_X_CONFIG[prompt.pwd.compressed]}" ] \
     || [ -z "$__BASHRC_X_PROMPT_PWD" ] \
-      || _s="${_s}s/\\\\w/${__BASHRC_X_PROMPT_PWD//\//\\/}/g;"
+      || _s="${_s}s/\\\\w/$(echo "${__BASHRC_X_PROMPT_PWD}" \
+          | 'sed' -e 's/\//\\\//g')/g;"
   [ -z "${__BASHRC_X_CONFIG[prompt.exit]}" ] || {
     [ 0 -eq $_e ] || {
       _x[1]="${_x[1]} \\[$__BASHRC_X_PROMPTC_DEFAULT\\]e"
