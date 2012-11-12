@@ -53,7 +53,7 @@ priority.
 ### PROMPTing Fields ###
 
 Dynamic PROMPTing contents would be generated and merged by
-[etc/bashrc.d/99-prompt.sh](/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/99-prompt.sh).
+[etc/bashrc.d/99-prompt.sh](https://github.com/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/99-prompt.sh).
 
 ![PROMPTing Sample](https://raw.github.com/snakevil/bashrc.x/master/doc/prompting-sample.png)
 
@@ -73,10 +73,28 @@ Dynamic PROMPTing contents would be generated and merged by
 Customization
 -------------
 
+### Features Configuration ###
+
+To make `Bashrc.X` more agile, you can use the command `config-bashrc.x`. For
+example:
+
+* `prompt.exit` - **Enable / Disable the last command exit code plugin**
+* `prompt.ip.cut` - ** Enable / Disable the IP cut mode**
+* `prompt.jobs` - **Enable / Disable background jobs plugin**
+* `prompt.load` - **Enable / Disable the load plugin**
+* `prompt.pwd.compressed` - **Enable / Disable CWD compression mode**
+* `prompt.time-consumed` - **Enable / Disable the last command time-consuming
+  plugin**
+* `prompt.vcs` - **Enable / Disable the repository branch plugin**
+* `prompt.vcs.delim` - **Set the heading content of repository branch plugin**
+
+For more detailed description and help page of configuration variables, please
+try `config-bashrc.x --help` and `config-bashrc.x -la`.
+
 ### PROMPTing Colors ###
 
 Totally 18 colors variables, which are provided by
-[etc/bashrc.d/05-colors.sh](/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/05-colors.sh),
+[etc/bashrc.d/05-colors.sh](https://github.com/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/05-colors.sh),
 are used for PROMPTing.
 
 To re-color the PROMPTing as you like, please create `~/.bashrc.x/colors.rc`,
@@ -90,6 +108,7 @@ Colors defeind by `Bashrc.X`:
 * `$__BASHRC_X_PROMPTC_IP` - **`IP` color**, defaults as `$Cpurple`
 * `$__BASHRC_X_PROMPTC_PWD` - **`CWD` color**, defaults as `$Cyellow`
 * `$__BASHRC_X_PROMPTC_VCS` - **Repository branch color at `CWD`**, defaults as `$Cgreen`
+* `$__BASHRC_X_PROMPTC_JOBS` - **Background jobs color**, defaults as `$Chwhite`
 * `$__BASHRC_X_PROMPTC_LOAD` - **Load default color**, defaults as `$Chgreen`
 * `$__BASHRC_X_PROMPTC_LOAD2` - **Load color as notice (0.10-1.00)**, defaults as `$Chyellow`
 * `$__BASHRC_X_PROMPTC_LOAD3` - **Load color as warning (1.00+)**, defaults as `$Chred`
@@ -102,7 +121,7 @@ What you need is to create scripting files named alike `[0-9][0-9]-*.sh` in the
 folder `~/.bashrc.x/bashrc.d`. And then, the scripts should be executed
 everytime you open the terminal.
 
-### PROMPting Plugins ###
+### PROMPTing Plugins ###
 
 PROMPTing plugins are a special kind of extensions in `Bashrc.X`. For most
 perfect experience, we should know the following 2 instructions:
@@ -137,10 +156,10 @@ perfect experience, we should know the following 2 instructions:
     ```
 
 For more information, please read the sample:
-[etc/bashrc.d/90-prompt-jobs.sh](/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/90-prompt-jobs.sh).
+[etc/bashrc.d/90-prompt-jobs.sh](https://github.com/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/90-prompt-jobs.sh).
 
 ###### Copyright © 2012 [Snakevil Zen][me]. ALL RIGHTS RESERVED. ######
 
-[profilex]: /snakevil/profilex (ProfileX)
+[profilex]: https://github.com/snakevil/profilex (ProfileX)
 [bash]: http://www.gnu.org/software/bash/manual/html_node/index.html
 [me]: https://szen.in
