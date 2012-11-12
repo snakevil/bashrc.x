@@ -24,42 +24,36 @@ __BASHRC_X_UPDATE() {
   local _c=(
     `'cat' ~/.bashrc.x/updaterc 2> /dev/null`
   ) _m _t=`'date' +%Y%m%d`
-  [ "s${_c[0]}" = "s$_t" ] || {
-    echo $_t > ~/.bashrc.x/updaterc
-    local _a=(
-      'git://github.com/snakevil/bashrc.x'
-      'git://github.com/snakevil/bashrc.x.git'
-      'git@github.com:snakevil/bashrc.x'
-      'git@github.com:snakevil/bashrc.x.git'
-      'https://github.com/snakevil/bashrc.x'
-      'https://github.com/snakevil/bashrc.x.git'
-    ) _b _d=`'readlink' -f ~/.local/bashrc.x` _s _v=()
-    _s=`cd "$_d"; 'git' remote show origin 2> /dev/null \
-      | 'awk' '"Fetch" == $1 {print $3}'`
-    [ -n "$_s" ] || return
-    for _i in ${_a[@]}; do
-      [ "s$_i" != "s$_s" ] || {
-        _i=''
-        break
-      }
-    done
-    [ -z "$_i" ] || return
-    _b=`cd "$_d"; 'git' symbolic-ref HEAD 2> /dev/null`
-    [ -n "$_b" ] || return
-    _v=(
-      `cd "$_d"; 'git' log -n1 --format='format:%H' 2> /dev/null`
-      `cd "$_d"; 'git' ls-remote origin -h "$_b" 2> /dev/null | 'cut' -f1`
-    )
-    [ -n "${_v[0]}" -a -n "${_v[1]}" ] || return
-    [ "s${_v[0]}" = "s${_v[1]}" ] || {
-      _c[1]=1
-      echo 1 >> ~/.bashrc.x/updaterc
-    }
-  }
   [ -z "${_c[1]}" ] || {
-    _m="\n\e[1;31mBashrc.X: new version found!"
-    _m="$_m run "'`'"\e[1;32mupdate-bashrc.x\e[1;31m' to update.\e[0m"
-    echo -e "$_m" >&2
+    _m="\n\e[1;33mBashrc.X: new version found!"
+    _m="$_m run "'`'"\e[1;32mupdate-bashrc.x\e[1;33m' to update.\e[0m"
+    'echo' -e "$_m" >&2
+    return
+  }
+  [ "s${_c[0]}" = "s$_t" ] || {
+    local _b _d=`'readlink' -f ~/.local/bashrc.x` _v=()
+    [ -d "$_d/../.git" ] || return
+    'echo' -ne "\n\e[1;33mBashrc.X: checking update..." >&2
+    'echo' $_t > ~/.bashrc.x/updaterc
+    _b=`cd "$_d"; 'git' symbolic-ref HEAD 2> /dev/null`
+    [ -n "$_b" ] && {
+      _v=(
+        `cd "$_d"; 'git' log -n1 --format='format:%H' 2> /dev/null`
+        `cd "$_d"; 'git' ls-remote origin -h "$_b" 2> /dev/null | 'cut' -f1`
+      )
+      [ -n "${_v[0]}" -a -n "${_v[1]}" ] && {
+        [ "s${_v[0]}" = "s${_v[1]}" ] && 'echo' -e "up-to-date.\e[0m" >&2 \
+          || {
+          _c[1]=1
+          _m="run "'`'"\e[1;32mupdate-bashrc.x\e[1;33m' to update"
+          _m="$_m the new version!"
+          'echo' 1 >> ~/.bashrc.x/updaterc
+          'echo' -e "$_m" >&2
+        }
+        return
+      }
+    }
+    'echo' -e "\e[1;31mfailed.\e[0m"
   }
 }
 __BASHRC_X_UPDATE
