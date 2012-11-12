@@ -78,6 +78,7 @@ cd -
 * `prompt.ip.cut` - **启用／禁用IP截取模式**
 * `prompt.jobs` - **启用／禁用后台保持任务提示插件**
 * `prompt.load` - **启用／禁用系统负载提示插件**
+* `prompt.load.interval` - **设置系统负载更新周期（单位：秒）**
 * `prompt.pwd.compressed` - **启用／禁用当前目录路径压缩模式**
 * `prompt.time-consumed` - **启用／禁用指令执行时间提示插件**
 * `prompt.vcs` - **启用／禁用版本库分支提示插件**

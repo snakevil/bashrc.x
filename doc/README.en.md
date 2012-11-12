@@ -82,6 +82,7 @@ example:
 * `prompt.ip.cut` - ** Enable / Disable the IP cut mode**
 * `prompt.jobs` - **Enable / Disable background jobs plugin**
 * `prompt.load` - **Enable / Disable the load plugin**
+* `prompt.load.interval` - **Set the interval time (seconds) of updating system load**
 * `prompt.pwd.compressed` - **Enable / Disable CWD compression mode**
 * `prompt.time-consumed` - **Enable / Disable the last command time-consuming
   plugin**

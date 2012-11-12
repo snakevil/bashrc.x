@@ -208,6 +208,7 @@ _cbx_awk_() {
         dd[ "prompt.vcs.delim"      ] = "/"
         dd[ "prompt.jobs"           ] = 1
         dd[ "prompt.load"           ] = 1
+        dd[ "prompt.load.interval"  ] = 30
         dd[ "prompt.time-consumed"  ] = 1
         dd[ "prompt.exit"           ] = 1
         if ( length( kk ) ) {
