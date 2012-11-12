@@ -106,6 +106,8 @@ Colors defeind by `Bashrc.X`:
 * `$__BASHRC_X_PROMPTC_USER` - **User color**, defaults as `$Ccyan`
 * `$__BASHRC_X_PROMPTC_SUSER` - **Effective user color in `SUDO` mode**, defaults as `$Cred`
 * `$__BASHRC_X_PROMPTC_IP` - **`IP` color**, defaults as `$Cpurple`
+* `$__BASHRC_X_PROMPTC_SSH_IP` - **`IP` under `SSH` color**, defaults as
+  `$Chblue`
 * `$__BASHRC_X_PROMPTC_PWD` - **`CWD` color**, defaults as `$Cyellow`
 * `$__BASHRC_X_PROMPTC_VCS` - **Repository branch color at `CWD`**, defaults as `$Cgreen`
 * `$__BASHRC_X_PROMPTC_JOBS` - **Background jobs color**, defaults as `$Chwhite`

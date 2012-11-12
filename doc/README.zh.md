@@ -100,6 +100,7 @@ cd -
 * `$__BASHRC_X_PROMPTC_USER` - **用户字段色**，默认为`$Ccyan`
 * `$__BASHRC_X_PROMPTC_SUSER` - **`SUDO` 模式扮演用户字段色**，默认为`$Cred`
 * `$__BASHRC_X_PROMPTC_IP` - **`IP` 字段色**，默认为`$Cpurple`
+* `$__BASHRC_X_PROMPTC_SSH_IP` - **`SSH`链接`IP`字段色**，默认为`$Chblue`
 * `$__BASHRC_X_PROMPTC_PWD` - **当前目录路径字段色**，默认为`$Cyellow`
 * `$__BASHRC_X_PROMPTC_VCS` - **当前目录版本库分支字段色**，默认为`$Cgreen`
 * `$__BASHRC_X_PROMPTC_JOBS` - **后台保持任务字段色**，默认为`$Chwhite`

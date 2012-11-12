@@ -24,6 +24,7 @@ export __BASHRC_X_PROMPTC_DEFAULT="$Chblack"
 export __BASHRC_X_PROMPTC_USER="$Ccyan"
 export __BASHRC_X_PROMPTC_SUSER="$Cred"
 export __BASHRC_X_PROMPTC_IP="$Cpurple"
+export __BASHRC_X_PROMPTC_SSH_IP="$Chblue"
 export __BASHRC_X_PROMPTC_PWD="$Cyellow"
 export __BASHRC_X_PROMPTC_EXIT="$Chred"
 
@@ -39,7 +40,9 @@ PS1="\\n\\[$Cnone$__BASHRC_X_PROMPTC_DEFAULT\\]\\d <"
   PS1="$PS1\\[$__BASHRC_X_PROMPTC_USER\\]\\u"
   PS1="$PS1\\[$__BASHRC_X_PROMPTC_DEFAULT\\]@"
 }
-PS1="$PS1\\[$__BASHRC_X_PROMPTC_IP\\]\\h\\[$__BASHRC_X_PROMPTC_DEFAULT\\]:"
+[ -n "${SSH_CONNECTION}" ] \
+  && PS1="$PS1\\[$__BASHRC_X_PROMPTC_SSH_IP\\]\\h\\[$__BASHRC_X_PROMPTC_DEFAULT\\]:" \
+  || PS1="$PS1\\[$__BASHRC_X_PROMPTC_IP\\]\\h\\[$__BASHRC_X_PROMPTC_DEFAULT\\]:"
 PS1="$PS1\\[$__BASHRC_X_PROMPTC_PWD\\]\\w\\[$__BASHRC_X_PROMPTC_DEFAULT\\]>\\n"
 PS1="$PS1\\[$__BASHRC_X_PROMPTC_DEFAULT\\]\\A [] \\$\\[$Cnone\\] "
 case "$TERM" in
