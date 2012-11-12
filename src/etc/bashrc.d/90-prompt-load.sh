@@ -26,25 +26,31 @@
   export __BASHRC_X_PROMPTC_LOAD3="$Chred"
 }
 
-export __BASHRC_X_PROMPT_LOAD=(0.00 0)
+export __BASHRC_X_PROMPT_LOAD=(
+  0.00
+  0
+  `'awk' '"processor"==$1{n++}END{print n}' /proc/cpuinfo`
+  1
+)
 
 __BASHRC_X_PROMPT_LOAD() {
   _p=(2 "")
   [ -n "${__BASHRC_X_CONFIG[prompt.load]}" ] || return
   local _t=`'date' +%s`
-  [ $_t -lt `'expr' ${__BASHRC_X_PROMPT_LOAD[1]} + 30` ] \
-    || __BASHRC_X_PROMPT_LOAD=(
-      `'uptime' \
-        | 'awk' -F'load average' '{print $2}' \
-        | 'awk' '{split($2,x,",");print x[1]}'`
-      $_t
-    )
+  [ $_t -lt `'expr' ${__BASHRC_X_PROMPT_LOAD[1]} + 30` ] || {
+    __BASHRC_X_PROMPT_LOAD[0]=`'uptime' \
+      | 'awk' -F'load average' '{print $2}' \
+      | 'awk' '{split($2,x,",");print x[1]}'`
+    __BASHRC_X_PROMPT_LOAD[1]=$_t
+    __BASHRC_X_PROMPT_LOAD[3]=`echo "${__BASHRC_X_PROMPT_LOAD[@]}" \
+      | 'awk' '{i=$1/$3;if(0.1>i)j=1;else if(1>i)j=2;else j=3;print j}'`
+  }
   _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]l"
-  case "${__BASHRC_X_PROMPT_LOAD[0]}" in
-    0.0? )
+  case "${__BASHRC_X_PROMPT_LOAD[3]}" in
+    1 )
       _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_LOAD\\]"
       ;;
-    0.?? )
+    2 )
       _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_LOAD2\\]"
       ;;
     * )
@@ -52,6 +58,10 @@ __BASHRC_X_PROMPT_LOAD() {
       ;;
   esac
   _p[1]="${_p[1]}${__BASHRC_X_PROMPT_LOAD[0]}"
+  [ -z "${__BASHRC_X_PROMPT_LOAD[2]}" -o 2 -gt "${__BASHRC_X_PROMPT_LOAD[2]}" ] || {
+    _p[1]="${_p[1]}\\[${__BASHRC_X_PROMPTC_DEFAULT}\\]"
+    _p[1]="${_p[1]}@${__BASHRC_X_PROMPT_LOAD[2]}"
+  }
 }
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:
