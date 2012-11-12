@@ -26,7 +26,7 @@ export __BASHRC_X_PROMPT_IP=(
 )
 [ -z "${__BASHRC_X_PROMPT_IP[0]}" ] \
   || __BASHRC_X_PROMPT_IP[1]=`echo "${__BASHRC_X_PROMPT_IP[0]}" \
-    | 'awk' -F. '{print $3, $4}'`
+    | 'awk' -F. '{print $3 "." $4}'`
 
 export __BASHRC_X_PROMPT_OLDPWD=""
 
