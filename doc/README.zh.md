@@ -54,17 +54,18 @@ cd -
 
 ![提示案例](https://raw.github.com/snakevil/bashrc.x/master/doc/prompting-sample.png)
 
-* `Wed Nov 08` - **日期**
-* <`root` - **`SUDO` 模式扮演用户**
+* `Tue Nov 13` - **日期**
+* <`hg` - **`SUDO` 模式扮演用户**
 * (`snakevil`) - **登录用户**
 * @`.94.32` - **`IP` 后两段**
 * :`/h*/s*/Doc*/P*/ba*/s*/e*/bashrc.d` - **当前目录路径 _（压缩版）_ **
 * /`g` - **当前目录版本库类型**
 * `master`> - **当前目录版本库分支名**
-* `10:26` - **时间**
+* `15:20` - **时间**
 * j`1` - **后台保持任务数**
-* l`1.15` - **系统负载**
-* c`0s54` - **上条指令执行时间**
+* l`1.15`@2 - **系统负载（CPU 内核数）**
+* m`73.0`% - *内存使用情况*
+* c`0s46` - **上条指令执行时间**
 * e`148` - **上条指令退出码**
 
 个性定制
@@ -79,6 +80,8 @@ cd -
 * `prompt.jobs` - **启用／禁用后台保持任务提示插件**
 * `prompt.load` - **启用／禁用系统负载提示插件**
 * `prompt.load.interval` - **设置系统负载更新周期（单位：秒）**
+* `prompt.mem` - **启用／禁用内存使用提示插件**
+* `prompt.mem.interval` - **设置内存使用更新周期（单位：秒）**
 * `prompt.pwd.compressed` - **启用／禁用当前目录路径压缩模式**
 * `prompt.time-consumed` - **启用／禁用指令执行时间提示插件**
 * `prompt.vcs` - **启用／禁用版本库分支提示插件**
@@ -108,6 +111,9 @@ cd -
 * `$__BASHRC_X_PROMPTC_LOAD` - **负载字段默认色**，默认为`$Chgreen`
 * `$__BASHRC_X_PROMPTC_LOAD2` - **负载字段（0.10-1.00）阶段色**，默认为`$Chyellow`
 * `$__BASHRC_X_PROMPTC_LOAD3` - **负载字段（1.00+）阶段色**，默认为`$Chred`
+* `$__BASHRC_X_PROMPTC_MEM` - **内存字段默认色**，默认为`$Cgreen`
+* `$__BASHRC_X_PROMPTC_MEM2` - **内存字段（40.0-79.9%）阶段色**，默认为`$Cyellow`
+* `$__BASHRC_X_PROMPTC_MEM3` - **内存字段（80.0%+）阶段色**，默认为`$Cred`
 * `$__BASHRC_X_PROMPTC_TC` - **上条指令执行时间字段色**，默认为`$Cwhite`
 * `$__BASHRC_X_PROMPTC_EXIT` - **上条指令退出码字段色**，默认为`$Chred`
 

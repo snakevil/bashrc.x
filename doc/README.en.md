@@ -57,16 +57,17 @@ Dynamic PROMPTing contents would be generated and merged by
 
 ![PROMPTing Sample](https://raw.github.com/snakevil/bashrc.x/master/doc/prompting-sample.png)
 
-* `Wed Nov 08` - **Date**
-* <`root` - **Effective user in `SUDO` mode**
+* `Tue Nov 13` - **Date**
+* <`hg` - **Effective user in `SUDO` mode**
 * (`snakevil`) - **Login user**
 * @`.94.32` - **Last 2 parts of `IP`**
 * :`/h*/s*/Doc*/P*/ba*/s*/e*/bashrc.d` - **`CWD`_(compressed)_ **
 * /`g` - **Repository type at `CWD`**
 * `master`> - **Repository branch at `CWD`**
-* `10:26` - **Time**
+* `15:20` - **Time**
 * j`1` - **Jobs in background**
-* l`1.15` - **Load**
+* l`1.15`@2 - **System load (@ CPU cores)**
+* m`73.0`% - **Memeory usage**
 * c`0s54` - **Time consumed by last command**
 * e`148` - **Exit code of last command**
 
@@ -81,8 +82,12 @@ example:
 * `prompt.exit` - **Enable / Disable the last command exit code plugin**
 * `prompt.ip.cut` - ** Enable / Disable the IP cut mode**
 * `prompt.jobs` - **Enable / Disable background jobs plugin**
-* `prompt.load` - **Enable / Disable the load plugin**
-* `prompt.load.interval` - **Set the interval time (seconds) of updating system load**
+* `prompt.load` - **Enable / Disable the system load plugin**
+* `prompt.load.interval` - **Set the interval time (seconds) of updating system
+  load**
+* `prompt.mem` - **Enable / Disable the memory usage plugin**
+* `prompt.mem.interval` - **Set the interval time (seconds) of updating memory
+  usage**
 * `prompt.pwd.compressed` - **Enable / Disable CWD compression mode**
 * `prompt.time-consumed` - **Enable / Disable the last command time-consuming
   plugin**
@@ -115,6 +120,9 @@ Colors defeind by `Bashrc.X`:
 * `$__BASHRC_X_PROMPTC_LOAD` - **Load default color**, defaults as `$Chgreen`
 * `$__BASHRC_X_PROMPTC_LOAD2` - **Load color as notice (0.10-1.00)**, defaults as `$Chyellow`
 * `$__BASHRC_X_PROMPTC_LOAD3` - **Load color as warning (1.00+)**, defaults as `$Chred`
+* `$__BASHRC_X_PROMPTC_MEM` - **Memory default color**, defaults as `$Cgreen`
+* `$__BASHRC_X_PROMPTC_MEM2` - **Memory color as notice (40.0-79.9%)**, defaults as `$Cyellow`
+* `$__BASHRC_X_PROMPTC_MEM3` - **memory color as warning (80.0%+)**, defaults as `$Cred`
 * `$__BASHRC_X_PROMPTC_TC` - **Time consumed color by last command**, defaults as `$Cwhite`
 * `$__BASHRC_X_PROMPTC_EXIT` - **Exit code color of last command**, defaults as `$Chred`
 
