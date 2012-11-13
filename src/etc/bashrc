@@ -20,7 +20,12 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-export __BASHRC_X_CHECKPOINT=(`'date' +%s.%N`, "")
+declare -Ax BASHRCX_BINS
+declare -Ax BASHRCX_COLORS
+declare -Ax BASHRCX_OPTS
+declare -Ax BASHRCX_VARS
+
+BASHRCX_VARS['checkpoint']=`'date' +'%s.%N'`
 
 [ -n "$BASH" ] || return
 
@@ -37,16 +42,36 @@ shopt -s histappend
 set -o functrace
 shopt -s extdebug
 
-for _ii_ in $(for _ii_ in ~/.local/bashrc.x/etc/bashrc.d/[0-9][0-9]-*.sh \
-    ~/.bashrc.x/bashrc.d/[0-9][0-9]-*.sh; do
-    [ ! -r "$_ii_" ] || {
-      printf "%-256s" `'basename' "$_ii_"`
-      echo "$_ii_"
-    }
-  done | 'sort' -k'1,1' -k'2r' | 'cut' -b'257-'); do
-  . "$_ii_"
-done
+shopt -u sourcepath
 
-unset -v _ii_ _jj_ _kk_
+function _bashrc.x-which {
+  local ii
+  for ii; do
+    [ -n "${BASHRCX_BINS[$ii]}" ] || {
+      BASHRCX_BINS[$ii]=`'which' "$ii"`
+      [ 0 -eq $? ] || BASHRCX_BINS[$ii]="$ii"
+    }
+    [ "s$ii" != "s${BASHRCX_BINS[$ii]}" ] || return 1
+  done
+}
+
+function _bashrc.x-main {
+  local aa bb cc dd ee ff gg
+  local hh ii jj kk ll mm nn
+  local oo pp qq rr ss tt
+  local uu vv ww xx yy zz
+  _bashrc.x-which 'basename' 'cut' 'sort' || return
+  for ii in $(for ii in ~/.local/bashrc.x/etc/bashrc.d/[0-9][0-9]-*.sh \
+      ~/.bashrc.x/bashrc.d/[0-9][0-9]-*.sh; do
+      [ ! -r "$ii" ] || {
+        printf "%-256s" `'basename' "$ii"`
+        echo "$ii"
+      }
+    done | 'sort' -k'1,1' -k'2r' | 'cut' -b'257-'); do
+    source "$ii"
+  done
+} 3>&2 > /dev/null 2>&1
+_bashrc.x-main
+unset -f _bashrc.x-main _bashrc.x-which
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

@@ -100,22 +100,22 @@ cd -
 
 `Bashrc.X`已定义的提示颜色有：
 
-* `$__BASHRC_X_PROMPTC_DEFAULT` - **提示默认色**，默认为`$Chblack`
-* `$__BASHRC_X_PROMPTC_USER` - **用户字段色**，默认为`$Ccyan`
-* `$__BASHRC_X_PROMPTC_SUSER` - **`SUDO` 模式扮演用户字段色**，默认为`$Cred`
-* `$__BASHRC_X_PROMPTC_IP` - **`IP` 字段色**，默认为`$Cpurple`
-* `$__BASHRC_X_PROMPTC_SSH_IP` - **`SSH`链接`IP`字段色**，默认为`$Chblue`
-* `$__BASHRC_X_PROMPTC_PWD` - **当前目录路径字段色**，默认为`$Cyellow`
-* `$__BASHRC_X_PROMPTC_VCS` - **当前目录版本库分支字段色**，默认为`$Cgreen`
-* `$__BASHRC_X_PROMPTC_JOBS` - **后台保持任务字段色**，默认为`$Chwhite`
-* `$__BASHRC_X_PROMPTC_LOAD` - **负载字段默认色**，默认为`$Chgreen`
-* `$__BASHRC_X_PROMPTC_LOAD2` - **负载字段（0.10-1.00）阶段色**，默认为`$Chyellow`
-* `$__BASHRC_X_PROMPTC_LOAD3` - **负载字段（1.00+）阶段色**，默认为`$Chred`
-* `$__BASHRC_X_PROMPTC_MEM` - **内存字段默认色**，默认为`$Cgreen`
-* `$__BASHRC_X_PROMPTC_MEM2` - **内存字段（40.0-79.9%）阶段色**，默认为`$Cyellow`
-* `$__BASHRC_X_PROMPTC_MEM3` - **内存字段（80.0%+）阶段色**，默认为`$Cred`
-* `$__BASHRC_X_PROMPTC_TC` - **上条指令执行时间字段色**，默认为`$Cwhite`
-* `$__BASHRC_X_PROMPTC_EXIT` - **上条指令退出码字段色**，默认为`$Chred`
+* `$BASHRCX_COLORS[default]` - **提示默认色**，默认为`$Chblack`
+* `$BASHRCX_COLORS[user]` - **用户字段色**，默认为`$Ccyan`
+* `$BASHRCX_COLORS[user.sudo]` - **`SUDO` 模式扮演用户字段色**，默认为`$Cred`
+* `$BASHRCX_COLORS[ip]` - **`IP` 字段色**，默认为`$Cpurple`
+* `$BASHRCX_COLORS[ip.ssh]` - **`SSH`链接`IP`字段色**，默认为`$Chblue`
+* `$BASHRCX_COLORS[pwd]` - **当前目录路径字段色**，默认为`$Cyellow`
+* `$BASHRCX_COLORS[vcs]` - **当前目录版本库分支字段色**，默认为`$Cgreen`
+* `$BASHRCX_COLORS[jobs]` - **后台保持任务字段色**，默认为`$Chwhite`
+* `$BASHRCX_COLORS[load]` - **负载字段默认色**，默认为`$Chgreen`
+* `$BASHRCX_COLORS[load.2]` - **负载字段（0.10-1.00）阶段色**，默认为`$Chyellow`
+* `$BASHRCX_COLORS[load.3]` - **负载字段（1.00+）阶段色**，默认为`$Chred`
+* `$BASHRCX_COLORS[mem]` - **内存字段默认色**，默认为`$Cgreen`
+* `$BASHRCX_COLORS[mem.2]` - **内存字段（40.0-79.9%）阶段色**，默认为`$Cyellow`
+* `$BASHRCX_COLORS[mem.3]` - **内存字段（80.0%+）阶段色**，默认为`$Cred`
+* `$BASHRCX_COLORS[time-consumed]` - **上条指令执行时间字段色**，默认为`$Cwhite`
+* `$BASHRCX_COLORS[exit]` - **上条指令退出码字段色**，默认为`$Chred`
 
 ### 功能扩展 ###
 
@@ -139,16 +139,16 @@ cd -
 
 2. 函数名
 
-    函数名应该符合`__BASHRC_X_PROMPT_*`规则。请尽量使用更有语义的名字，以免造成
-    既有插件工作不正常，或该插件自身工作不正常。
+    函数名应该符合`_bashrc.x-prompt-[12].[0-9][0-9]-*`规则。请尽量使用更有语义
+    的名字，以免造成既有插件工作不正常，或该插件自身工作不正常。
 
 3. 函数输出
 
-    鉴于 [BASH][] 的函数定义无法直接返回需要的结果，我们使用特殊数组变量`_p`作为
-    返回结果变量。
+    鉴于 [BASH][] 的函数定义无法直接返回需要的结果，我们使用特殊数组变量`_pret`
+    作为返回结果变量。
 
     ```shell
-    _p=(
+    _pret=(
       1  # 控制内容显示位置。可选值为“1”或“2”，分别对应当前工作目录后的位置，和
          # 提示符前的位置。
       "" # 控制内容，包括颜色定义。

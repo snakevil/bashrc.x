@@ -20,33 +20,35 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-export __BASHRC_X_PROMPTC_DEFAULT="$Chblack"
-export __BASHRC_X_PROMPTC_USER="$Ccyan"
-export __BASHRC_X_PROMPTC_SUSER="$Cred"
-export __BASHRC_X_PROMPTC_IP="$Cpurple"
-export __BASHRC_X_PROMPTC_SSH_IP="$Chblue"
-export __BASHRC_X_PROMPTC_PWD="$Cyellow"
-export __BASHRC_X_PROMPTC_EXIT="$Chred"
+BASHRCX_COLORS['default']="$Chblack"
+BASHRCX_COLORS['user']="$Ccyan"
+BASHRCX_COLORS['user.sudo']="$Cred"
+BASHRCX_COLORS['ip']="$Cpurple"
+BASHRCX_COLORS['ip.ssh']="$Chblue"
+BASHRCX_COLORS['pwd']="$Cyellow"
+BASHRCX_COLORS['exit']="$Chred"
 
-[ ! -r ~/.bashrc.x/colors.rc ] || . ~/.bashrc.x/colors.rc
+[ ! -r ~/.bashrc.x/colors.rc ] || source ~/.bashrc.x/colors.rc
 
-PS1="\\n\\[$Cnone$__BASHRC_X_PROMPTC_DEFAULT\\]\\d <"
+PS1="\\n\\[$Cnone${BASHRCX_COLORS['default']}\\]\\d <"
 [ -n "$SUDO_USER" ] && {
-  PS1="$PS1\\[$__BASHRC_X_PROMPTC_SUSER\\]\\u"
-  PS1="$PS1\\[$__BASHRC_X_PROMPTC_DEFAULT\\]("
-  PS1="$PS1\\[$__BASHRC_X_PROMPTC_USER\\]$SUDO_USER"
-  PS1="$PS1\\[$__BASHRC_X_PROMPTC_DEFAULT\\])@"
+  PS1="$PS1\\[${BASHRCX_COLORS['user.sudo']}\\]\\u"
+  PS1="$PS1\\[${BASHRCX_COLORS['default']}\\]("
+  PS1="$PS1\\[${BASHRCX_COLORS['user']}\\]$SUDO_USER"
+  PS1="$PS1\\[${BASHRCX_COLORS['default']}\\])@"
 } || {
-  PS1="$PS1\\[$__BASHRC_X_PROMPTC_USER\\]\\u"
-  PS1="$PS1\\[$__BASHRC_X_PROMPTC_DEFAULT\\]@"
+  PS1="$PS1\\[${BASHRCX_COLORS['user']}\\]\\u"
+  PS1="$PS1\\[${BASHRCX_COLORS['default']}\\]@"
 }
-[ -n "${SSH_CONNECTION}" ] \
-  && PS1="$PS1\\[$__BASHRC_X_PROMPTC_SSH_IP\\]\\h\\[$__BASHRC_X_PROMPTC_DEFAULT\\]:" \
-  || PS1="$PS1\\[$__BASHRC_X_PROMPTC_IP\\]\\h\\[$__BASHRC_X_PROMPTC_DEFAULT\\]:"
-PS1="$PS1\\[$__BASHRC_X_PROMPTC_PWD\\]\\w\\[$__BASHRC_X_PROMPTC_DEFAULT\\]>\\n"
-PS1="$PS1\\[$__BASHRC_X_PROMPTC_DEFAULT\\]\\A [] \\$\\[$Cnone\\] "
+[ -n "${SSH_CONNECTION}" ] && {
+  PS1="$PS1\\[${BASHRCX_COLORS['ip.ssh']}\\]"
+} || PS1="$PS1\\[${BASHRCX_COLORS['ip']}\\]"
+PS1="$PS1\\h\\[${BASHRCX_COLORS['default']}\\]:"
+PS1="$PS1\\[${BASHRCX_COLORS['pwd']}\\]\\w"
+PS1="$PS1\\[${BASHRCX_COLORS['default']}\\]>\\n"
+PS1="$PS1\\[${BASHRCX_COLORS['default']}\\]\\A [] \\$\\[$Cnone\\] "
 case "$TERM" in
-  *xterm* | rxvt )
+  *'xterm'* | 'rxvt' )
     [ -n "$SUDO_USER" ] \
       && PS1="\\[\\e]0;\\u($SUDO_USER)@\\h:\\w\\007\\]$PS1" \
       || PS1="\\[\\e]0;\\u@\\h:\\w\\007\\]$PS1"

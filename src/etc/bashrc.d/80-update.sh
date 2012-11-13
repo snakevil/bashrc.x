@@ -20,43 +20,39 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-__BASHRC_X_UPDATE() {
-  local _c=(
-    `'cat' ~/.bashrc.x/updaterc 2> /dev/null`
-  ) _m _t=`'date' +%Y%m%d`
-  [ -z "${_c[1]}" ] || {
-    _m="\n\e[1;33mBashrc.X: new version found!"
-    _m="$_m run "'`'"\e[1;32mupdate-bashrc.x\e[1;33m' to update.\e[0m"
-    'echo' -e "$_m" >&2
+_bashrc.x-which 'cat' 'cut' 'date' 'git' 'readlink' && {
+  cc=(`'cat' ~/.bashrc.x/updaterc`)
+  tt=`'date' +'%Y%m%d'`
+  [ -n "${cc[1]}" ] && {
+    mm="\e[1;33mbashrc.x: new version found!"
+    mm="$mm run "'`'"\e[1;32mupdate-bashrc.x\e[1;33m' to update.\e[0m"
+    echo -e "\n$mm" >&3
     return
-  }
-  [ "s${_c[0]}" = "s$_t" ] || {
-    local _b _d=`'readlink' -f ~/.local/bashrc.x` _v=()
-    [ -d "$_d/../.git" ] || return
-    'echo' -ne "\n\e[1;33mBashrc.X: checking update..." >&2
-    'echo' $_t > ~/.bashrc.x/updaterc
-    _b=`cd "$_d"; 'git' symbolic-ref HEAD 2> /dev/null`
-    [ -n "$_b" ] && {
-      _v=(
-        `cd "$_d"; 'git' log -n1 --format='format:%H' 2> /dev/null`
-        `cd "$_d"; 'git' ls-remote origin -h "$_b" 2> /dev/null | 'cut' -f1`
-      )
-      [ -n "${_v[0]}" -a -n "${_v[1]}" ] && {
-        [ "s${_v[0]}" = "s${_v[1]}" ] && 'echo' -e "up-to-date.\e[0m" >&2 \
+  } || {
+    dd=`'readlink' -f ~/.local/bashrc.x`
+    [ ! -d "$dd" -o "s${cc[0]}" = "s$tt" ] || {
+      echo -ne "\n\e[1;33mbashrc.x: checking update..." >&3
+      echo $tt > ~/.bashrc.x/updaterc
+      bb=`cd "$dd"; 'git' symbolic-ref HEAD`
+      [ -z "$bb" ] || vv=(
+          `cd "$dd"; 'git' log -n1 --format='format:%H'`
+          `cd "$dd"; 'git' ls-remote origin -h "$bb" | 'cut' -f1`
+        )
+      [ -z "$bb" -o -z "${vv[0]}" -o -z "${vv[1]}" ] \
+        && echo -e "\e[1;31mfailed.\e[0m" >&3 \
+        || {
+          [ "s${vv[0]}" = "s${vv[1]}" ] && 'echo' -e "up-to-date.\e[0m" >&2 \
           || {
-          _c[1]=1
-          _m="run "'`'"\e[1;32mupdate-bashrc.x\e[1;33m' to update"
-          _m="$_m the new version!"
-          'echo' 1 >> ~/.bashrc.x/updaterc
-          'echo' -e "$_m" >&2
+            cc[1]=1
+            mm="run "'`'"\e[1;32mupdate-bashrc.x\e[1;33m' to update"
+            mm="$mm the new version!"
+            echo 1 >> ~/.bashrc.x/updaterc
+            echo -e "$mm" >&3
+          }
         }
-        return
-      }
     }
-    'echo' -e "\e[1;31mfailed.\e[0m"
   }
+  unset -v cc vv
 }
-__BASHRC_X_UPDATE
-unset -f __BASHRC_X_UPDATE
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

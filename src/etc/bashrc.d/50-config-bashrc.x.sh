@@ -20,38 +20,39 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-config-bashrc.x() {
-  local _c=`'which' 'config-bashrc.x' 2>/dev/null` _e _s
-  "$_c" "$@"
-  _e=$?
-  [ 0 -eq $# -o 's-' = "s${1:0:1}" -a 's-d' != "s$1" ] || {
-    __BASHRC_X_PROMPT_OLDPWD=''
-    'eval' "$("$_c" -e | 'grep' -v '^declare')"
+_bashrc.x-which 'awk' 'config-bashrc.x' && {
+  function config-bashrc.x {
+    "${BASHRCX_BINS['config-bashrc.x']}" "$@"
+    local ee=$?
+    [ 0 -eq $# -o 's-' = "s${1:0:1}" -a 's-d' != "s$1" ] || {
+      __BASHRC_X_PROMPT_OLDPWD=''
+      eval "$("${BASHRCX_BINS['config-bashrc.x']}" -e)"
+    }
+    return $ee
   }
-  return $_e
-}
 
-_config_bashrcx() {
-  COMPREPLY=()
-  [ "$1" = "$3" ] || {
-    case "$3" in
-      -l )
-        COMPREPLY=( '-a' )
-        ;;
-      -d )
-        COMPREPLY=(`'compgen' -W "$(
-            'config-bashrc.x' -l | 'awk' '{print $1}'
-          )" -- "$2"`)
-        ;;
-    esac
-    return
+  function _config-bashrc.x {
+    COMPREPLY=()
+    [ "$1" = "$3" ] || {
+      case "$3" in
+        '-l' )
+          COMPREPLY=( '-a' )
+          ;;
+        '-d' )
+          COMPREPLY=(`compgen -W "$(
+              'config-bashrc.x' -l | 'awk' '{print $1}'
+            )" -- "$2"`)
+          ;;
+      esac
+      return
+    }
+    COMPREPLY=(`compgen -W " --help --version $(
+        'config-bashrc.x' -la | 'awk' '{print $1}'
+      ) -d -e -l " -- "$2"`)
   }
-  COMPREPLY=(`'compgen' -W " --help --version $(
-      'config-bashrc.x' -la | 'awk' '{print $1}'
-    ) -d -e -l " -- "$2"`)
-}
-'complete' -F _config_bashrcx config-bashrc.x
+  complete -F '_config-bashrc.x' 'config-bashrc.x'
 
-'eval' `'config-bashrc.x' -e`
+  eval "$('config-bashrc.x' -e)"
+}
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

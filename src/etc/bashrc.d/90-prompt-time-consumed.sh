@@ -20,48 +20,51 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-[ -n "$__BASHRC_X_PROMPTC_TC" ] || export __BASHRC_X_PROMPTC_TC="$Cwhite"
+_bashrc.x-which 'awk' 'date' && {
+  [ -n "${BASHRCX_COLORS['time-consumed']}" ] \
+    || BASHRCX_COLORS['time-consumed']="$Cwhite"
 
-__BASHRC_X_PROMPT_TIME_CONSUMED() {
-  _p=(2 "")
-  [ -n "${__BASHRC_X_CONFIG[prompt.time-consumed]}" ] || return
-  local _t=`'echo' $('date' +%s.%N) $__BASHRC_X_CHECKPOINT \
-    | 'awk' '{
-        z = $1 - $2
-        split( z % 60, y, "." )
-        n = substr( y[2], 1, 2 )
-        s = y[1] "s"
-        d = h = m = ""
-        x = int( z / 60 )
-        if ( x ) {
-          m = ( x % 60 ) "m"
-          x = int( x / 60 )
+  function _bashrc.x-prompt-2.30-time-consumed {
+    _pret=(2 "")
+    [ -n "${BASHRCX_OPTS['prompt.time-consumed']}" ] || return
+    local tt=`echo "$('date' +'%s.%N') ${BASHRCX_VARS['checkpoint']}" \
+      | 'awk' '{
+          z = $1 - $2
+          split( z % 60, y, "." )
+          n = substr( y[2], 1, 2 )
+          s = y[1] "s"
+          d = h = m = ""
+          x = int( z / 60 )
           if ( x ) {
-            h = ( x % 24 ) "h"
-            x = int( x / 24 )
-            if ( x )
-              d = x "d"
+            m = ( x % 60 ) "m"
+            x = int( x / 60 )
+            if ( x ) {
+              h = ( x % 24 ) "h"
+              x = int( x / 24 )
+              if ( x )
+                d = x "d"
+            }
           }
-        }
-        if ( length( d ) ) print d h m
-        else if ( length( h ) ) print h m s
-        else if ( length( m ) ) print m s n
-        else print s n
-      }'`
-  _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]c"
-  _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_TC\\]$_t"
+          if ( length( d ) ) print d h m
+          else if ( length( h ) ) print h m s
+          else if ( length( m ) ) print m s n
+          else print s n
+        }'`
+    _pret[1]="\\[${BASHRCX_COLORS['default']}\\]c"
+    _pret[1]="${_pret[1]}\\[${BASHRCX_COLORS['time-consumed']}\\]$tt"
+  }
 }
 
 # REF # http://www.twistedmatrix.com/users/glyph/preexec.bash.txt
 
-__BASHRC_X_CHECKPOINT() {
-  [ -z "${__BASHRC_X_CHECKPOINT[1]}" ] \
-    || __BASHRC_X_CHECKPOINT=(
-        `'date' +%s.%N`
-        ""
-      )
+_bashrc.x-which 'date' && {
+  function _bashrc.x-checkpoint {
+    [ -z "${BASHRCX_VARS['checkpoint.ok']}" ] || {
+      BASHRCX_VARS['checkpoint']=`'date' +'%s.%N'`
+      BASHRCX_VARS['checkpoint.ok']=''
+    }
+  }
+  trap '_bashrc.x-checkpoint' 'DEBUG'
 }
-
-trap __BASHRC_X_CHECKPOINT DEBUG
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

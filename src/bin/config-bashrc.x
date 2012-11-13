@@ -239,9 +239,9 @@ _cbx_awk_() {
       }
       END {
         if ( "export" == xxx ) {
-          print "declare -Ax __BASHRC_X_CONFIG"
+          ORS=";"
           for ( i in dd ) {
-            printf "%s", "__BASHRC_X_CONFIG[" i "]='"'"'"
+            printf "%s", "BASHRCX_OPTS['"'"'" i "'"'"']='"'"'"
             if ( i in cc )
               print v4e( cc[ i ] ) "'"'"'"
             else

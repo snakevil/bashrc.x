@@ -20,14 +20,14 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-[ -n "$__BASHRC_X_PROMPTC_JOBS" ] || export __BASHRC_X_PROMPTC_JOBS="$Chwhite"
+[ -n "${BASHRCX_COLORS['jobs']}" ] || BASHRCX_COLORS['jobs']="$Chwhite"
 
-__BASHRC_X_PROMPT_JOBS() {
-  _p=(2 "")
-  [ -n "${__BASHRC_X_CONFIG[prompt.jobs]}" ] || return
+function _bashrc.x-prompt-2.00-jobs {
+  _pret=(2 "")
+  [ -n "${BASHRCX_OPTS['prompt.jobs']}" ] || return
   [ -z "$('jobs' -p)" ] || {
-    _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]j"
-    _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_JOBS\\]\\j"
+    _pret[1]="\\[${BASHRCX_COLORS['default']}\\]j"
+    _pret[1]="${_pret[1]}\\[${BASHRCX_COLORS['jobs']}\\]\\j"
   }
 }
 

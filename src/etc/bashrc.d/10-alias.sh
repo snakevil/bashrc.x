@@ -30,7 +30,7 @@ alias cat='cat -sb'
 alias cp='cp -ai'
 alias df='df -Th'
 
-'which' colordiff > /dev/null 2>&1 \
+_bashrc.x-which 'colordiff' \
   && alias diff='colordiff -u' \
   || alias diff='diff -u'
 
@@ -42,28 +42,31 @@ alias grep='LANG=C grep --color=auto'
 alias la='ll -A'
 alias ll='ls -hlt'
 
-case `'uname' -s` in
-  Linux )
-    _ii_=linux
-    ;;
-  *[Bb][Ss][Dd] | Darwin )
-    _ii_=unix
-    ;;
-  * )
-    _ii_=wtf
-    ;;
-esac
-[ -z "$('ls' --version 2> /dev/null | 'grep' GNU 2> /dev/null)" ] \
-  || _ii_=linux
-[ cygwin != "$TERM" ] || _ii_=cygwin
-case $_ii_ in
-  cygwin )
+_bashrc.x-which 'uname' && {
+  case `'uname' -s` in
+    'Linux' )
+      ii='linux'
+      ;;
+    *[Bb][Ss][Dd] | 'Darwin' )
+      ii='unix'
+      ;;
+    * )
+      ii='wtf'
+      ;;
+  esac
+}
+_bashrc.x-which 'grep' && {
+  'ls' --version | 'grep' -c 'GNU' && ii='linux'
+}
+[ 'scygwin' != "s$TERM" ] || ii='cygwin'
+case "$ii" in
+  'cygwin' )
     alias ls='ls -F --color=auto --show-control-chars'
     ;;
-  linux )
+  'linux' )
     alias ls='ls -F --color=auto'
     ;;
-  unix )
+  'unix' )
     alias ls='ls -FG'
     ;;
 esac

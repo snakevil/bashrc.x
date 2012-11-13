@@ -20,18 +20,18 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-[ -n "$__BASHRC_X_PROMPTC_VCS" ] || export __BASHRC_X_PROMPTC_VCS="$Cgreen"
+_bashrc.x-which 'svn' && {
+  [ -n "${BASHRCX_COLORS['vcs']}" ] || BASHRCX_COLORS['vcs']="$Cgreen"
 
-export __BASHRC_X_PROMPT_VCS_SVN=""
-
-__BASHRC_X_PROMPT_VCS_SVN() {
-  _p=(1 "")
-  [ -n "${__BASHRC_X_CONFIG[prompt.vcs]}" ] || return
-  [ "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] \
-    || __BASHRC_X_PROMPT_VCS_SVN=`'svn' info > /dev/null 2>&1 && 'echo' trunk`
-  [ -z "$__BASHRC_X_PROMPT_VCS_SVN" ] || {
-    _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
-    _p[1]="${_p[1]}${__BASHRC_X_CONFIG[prompt.vcs.delim]}s"
+  function _bashrc.x-prompt-1.00-vcs.svn {
+    _pret=(1 "")
+    [ -n "${BASHRCX_OPTS['prompt.vcs']}" ] || return
+    [ "s${BASHRCX_VARS['pwd.old']}" = "s$PWD" ] \
+      || BASHRCX_VARS['vcs.svn']=`'svn' info`
+    [ -z "${BASHRCX_VARS['vcs.svn']}" ] || {
+      _pret[1]="\\[${BASHRCX_COLORS['default']}\\]"
+      _pret[1]="${_pret[1]}${BASHRCX_OPTS['prompt.vcs.delim']}s"
+    }
   }
 }
 

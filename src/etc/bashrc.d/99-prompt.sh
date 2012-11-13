@@ -20,110 +20,58 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-export __BASHRC_X_PROMPT_IP=(
-  `'ifconfig' 2> /dev/null | 'awk' '!x&&/inet /&&!/127\./{x=1;print $2}'`
-  ''
-)
-[ -z "${__BASHRC_X_PROMPT_IP[0]}" ] \
-  || __BASHRC_X_PROMPT_IP[1]=`echo "${__BASHRC_X_PROMPT_IP[0]}" \
-    | 'awk' -F. '{print $3 "." $4}'`
+_bashrc.x-which 'sed' && {
+  BASHRCX_VARS['ps']="$PS1"
 
-export __BASHRC_X_PROMPT_OLDPWD=""
-
-export __BASHRC_X_PROMPT_PWD="$PWD"
-
-__BASHRC_X_PROMPT_PWD() {
-  local _d
-  case "$PWD" in
-    "$HOME" )
-      _d="~"
-      ;;
-    "$HOME"/* )
-      _d="${PWD/$HOME/~}"
-      ;;
-    * )
-      _d="$PWD"
-      ;;
-  esac
-  _p=(0 "")
-  [ -n "${__BASHRC_X_CONFIG[prompt.pwd.compressed]}" ] || {
-    __BASHRC_X_PROMPT_PWD="$_d"
-    return
-  }
-  [ "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] || {
-    __BASHRC_X_PROMPT_PWD=`'echo' "$_d" \
-      | 'gawk' -F'/' '1 < NF {
-          i = "*"
-          j = $1 "/"
-          for ( k = 2; k < NF; k++ ) {
-            l = length( $k )
-            for ( m = 1; m <= l; m++) {
-              n = 0
-              o = "ls -d " j substr( $k, 1, m ) "* 2> /dev/null"
-              while ( 0 < ( o | getline p) ) n++
-              close( o )
-              if ( 1 == n ) break
-            }
-            if ( m + 2 > l ) j = j $k "/"
-            else
-              j = j substr( $k, 1, m ) i "/"
-          }
-          print j $NF
-        }'`
-  }
-}
-
-export __BASHRC_X_PROMPT_PS="$PS1"
-
-__BASHRC_X_PROMPT() {
-  local _e=$? _i _p _s _t _x=("" "")
-  history -a
-  for _t in `'compgen' -A function __BASHRC_X_PROMPT_`; do
-    _p=(0 "")
-    $_t
-    [ -z "${_p[0]}" ] || {
-      case ${_p[0]} in
-        1 )
-          [ -z "${_p[0]}" ] \
-            || _x[0]="${_x[0]}${_p[1]}\\[${__BASHRC_X_PROMPTC_DEFAULT}\\]"
-          ;;
-        2 )
-          [ -z "${_p[1]}" ] \
-            || _x[1]="${_x[1]} ${_p[1]}\\[${__BASHRC_X_PROMPTC_DEFAULT}\\]"
-          ;;
-      esac
+  function _bashrc.x-prompt {
+    local ee=$? _pret ss tt xx=("" "")
+    history -a
+    for tt in `'compgen' -A function "${FUNCNAME}-"`; do
+      _pret=(0 '')
+      "$tt"
+      declare -p _pret
+      [ -z "${_pret[1]}" ] || {
+        case ${_pret[0]} in
+          1 )
+            xx[0]="${xx[0]}${_pret[1]}\\[${BASHRCX_COLORS['default']}\\]"
+            ;;
+          2 )
+            xx[1]="${xx[1]} ${_pret[1]}\\[${BASHRCX_COLORS['default']}\\]"
+            ;;
+        esac
+      }
+    done
+    [ -z "${BASHRCX_VARS['ip']}" ] \
+      || [ -z "${BASHRCX_OPTS['prompt.ip.cut']}" ] \
+        && ss="s/\\\\h/${BASHRCX_VARS['ip']}/g;" \
+        || ss="s/\\\\h/${BASHRCX_VARS['ip.cut']}/g;"
+    [ -z "${BASHRCX_OPTS['prompt.pwd.compressed']}" ] \
+      || [ -z "${BASHRCX_VARS['pwd']}" ] \
+        || ss="${ss}s/\\\\w/$(echo "${BASHRCX_VARS['pwd']}" \
+            | 'sed' -e 's/\//\\\//g')/g;"
+    [ -z "${BASHRCX_OPTS['prompt.exit']}" ] || {
+      [ 0 -eq $ee ] || {
+        xx[1]="${xx[1]} \\[${BASHRCX_COLORS['default']}\\]e"
+        xx[1]="${xx[1]}\\[${BASHRCX_COLORS['exit']}\\]$ee"
+        xx[1]="${xx[1]}\\[${BASHRCX_COLORS['default']}\\]"
+      }
     }
-  done
-  [ -z "$__BASHRC_X_PROMPT_IP" ] \
-    || [ -z "${__BASHRC_X_CONFIG[prompt.ip.cut]}" ] \
-      && _s="s/\\\\h/${__BASHRC_X_PROMPT_IP[0]}/g;" \
-      || _s="s/\\\\h/${__BASHRC_X_PROMPT_IP[1]}/g;"
-  [ -z "${__BASHRC_X_CONFIG[prompt.pwd.compressed]}" ] \
-    || [ -z "$__BASHRC_X_PROMPT_PWD" ] \
-      || _s="${_s}s/\\\\w/$(echo "${__BASHRC_X_PROMPT_PWD}" \
-          | 'sed' -e 's/\//\\\//g')/g;"
-  [ -z "${__BASHRC_X_CONFIG[prompt.exit]}" ] || {
-    [ 0 -eq $_e ] || {
-      _x[1]="${_x[1]} \\[$__BASHRC_X_PROMPTC_DEFAULT\\]e"
-      _x[1]="${_x[1]}\\[$__BASHRC_X_PROMPTC_EXIT\\]$_e"
-      _x[1]="${_x[1]}\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
+    [ -z "${xx[0]}" ] || {
+      xx[0]="${xx[0]//\\/\\\\}"
+      ss="${ss}s/>\\\\n/${xx[0]//\//\\/}>\\\\n/;"
     }
-  }
-  [ -z "${_x[0]}" ] || {
-    _x[0]="${_x[0]//\\/\\\\}"
-    _s="${_s}s/>\\\\n/${_x[0]//\//\\/}>\\\\n/;"
-  }
-  [ -z "${_x[1]}" ] && {
-    _s="${_s}s/ \\[\\] / /;"
-  } || {
-    _x[1]="${_x[1]:1}"
-    _x[1]="${_x[1]//\\/\\\\}"
-    _s="${_s}s/\\[\\] /\\[${_x[1]//\//\\/}\\] /;"
-  }
-  [ -z "$_s" ] || PS1=`'echo' "$__BASHRC_X_PROMPT_PS" | 'sed' -e "$_s"`
-  __BASHRC_X_PROMPT_OLDPWD="$PWD"
-  __BASHRC_X_CHECKPOINT[1]="ready"
+    [ -z "${xx[1]}" ] && {
+      ss="${ss}s/ \\[\\] / /;"
+    } || {
+      xx[1]="${xx[1]:1}"
+      xx[1]="${xx[1]//\\/\\\\}"
+      ss="${ss}s/\\[\\] /\\[${xx[1]//\//\\/}\\] /;"
+    }
+    [ -z "$ss" ] || PS1=`'echo' "${BASHRCX_VARS['ps']}" | 'sed' -e "$ss"`
+    BASHRCX_VARS['pwd.old']="$PWD"
+    BASHRCX_VARS['checkpoint.ok']="ready"
+  } 3>&2 > /dev/null 2>&1
+  export PROMPT_COMMAND='_bashrc.x-prompt'
 }
-export PROMPT_COMMAND=__BASHRC_X_PROMPT
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

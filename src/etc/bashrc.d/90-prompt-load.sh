@@ -20,50 +20,50 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-[ -n "$__BASHRC_X_PROMPTC_LOAD" ] || {
-  export __BASHRC_X_PROMPTC_LOAD="$Chgreen"
-  export __BASHRC_X_PROMPTC_LOAD2="$Chyellow"
-  export __BASHRC_X_PROMPTC_LOAD3="$Chred"
-}
-
-export __BASHRC_X_PROMPT_LOAD=(
-  0.00
-  0
-  `[ 'sDarwin' = "s$('uname' -s)" ] \
-    && 'sysctl' -n machdep.cpu.core_count \
-    || 'awk' '"processor"==$1{n++}END{print n}' /proc/cpuinfo`
-  1
-)
-
-__BASHRC_X_PROMPT_LOAD() {
-  _p=(2 "")
-  [ -n "${__BASHRC_X_CONFIG[prompt.load]}" ] || return
-  local _t=`'date' +%s`
-  local _x=`'expr' ${__BASHRC_X_PROMPT_LOAD[1]} + ${__BASHRC_X_CONFIG[prompt.load.interval]}`
-  [ $_t -lt $_x ] || {
-    __BASHRC_X_PROMPT_LOAD[0]=`'uptime' \
-      | 'awk' -F'load average' '{print $2}' \
-      | 'awk' '{split($2,x,",");print x[1]}'`
-    __BASHRC_X_PROMPT_LOAD[1]=$_t
-    __BASHRC_X_PROMPT_LOAD[3]=`echo "${__BASHRC_X_PROMPT_LOAD[@]}" \
-      | 'awk' '{i=$1/$3;if(0.1>i)j=1;else if(1>i)j=2;else j=3;print j}'`
+_bashrc.x-which 'awk' 'date' 'uname' 'uptime' && {
+  [ -n "${BASHRCX_COLORS['load']}" ] || {
+    BASHRCX_COLORS['load']="$Chgreen"
+    BASHRCX_COLORS['load.2']="$Chyellow"
+    BASHRCX_COLORS['load.3']="$Chred"
   }
-  _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]l"
-  case "${__BASHRC_X_PROMPT_LOAD[3]}" in
-    1 )
-      _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_LOAD\\]"
-      ;;
-    2 )
-      _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_LOAD2\\]"
-      ;;
-    * )
-      _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_LOAD3\\]"
-      ;;
-  esac
-  _p[1]="${_p[1]}${__BASHRC_X_PROMPT_LOAD[0]}"
-  [ -z "${__BASHRC_X_PROMPT_LOAD[2]}" -o 2 -gt "${__BASHRC_X_PROMPT_LOAD[2]}" ] || {
-    _p[1]="${_p[1]}\\[${__BASHRC_X_PROMPTC_DEFAULT}\\]"
-    _p[1]="${_p[1]}@${__BASHRC_X_PROMPT_LOAD[2]}"
+
+  BASHRCX_VARS['load']='0.00'
+  BASHRCX_VARS['load.time']=0
+  BASHRCX_VARS['load.cores']=`[ 'sDarwin' = "s$('uname' -s)" ] \
+      && 'sysctl' -n 'machdep.cpu.core_count' \
+      || 'awk' '"processor"==$1{n++}END{print n}' /proc/cpuinfo`
+  BASHRCX_VARS['load.level']=1
+
+  function _bashrc.x-prompt-2.10-load {
+    _pret=(2 "")
+    [ -n "${BASHRCX_OPTS['prompt.load']}" ] || return
+    local t1=`'date' +'%s'` t2
+    let t2=${BASHRCX_VARS['load.time']}+${BASHRCX_OPTS['prompt.load.interval']}
+    [ $t1 -lt $t2 ] || {
+      BASHRCX_VARS['load']=`'uptime' \
+        | 'awk' -F'load average' '{print $2}' \
+        | 'awk' '{split($2,x,",");print x[1]}'`
+      BASHRCX_VARS['load.time']=$t1
+      BASHRCX_VARS['load.level']=`echo "${BASHRCX_VARS['load']} ${BASHRCX_VARS['load.cores']}" \
+        | 'awk' '{i=$1/$2;if(0.1>i)j=1;else if(1>i)j=2;else j=3;print j}'`
+    }
+    _pret[1]="\\[${BASHRCX_COLORS['default']}\\]l"
+    case "${BASHRCX_VARS['load.level']}" in
+      1 )
+        _pret[1]="${_pret[1]}\\[${BASHRCX_COLORS['load']}\\]"
+        ;;
+      2 )
+        _pret[1]="${_pret[1]}\\[${BASHRCX_COLORS['load.2']}\\]"
+        ;;
+      * )
+        _pret[1]="${_pret[1]}\\[${BASHRCX_COLORS['load.3']}\\]"
+        ;;
+    esac
+    _pret[1]="${_pret[1]}${BASHRCX_VARS['load']}"
+    [ -z "${BASHRCX_VARS['load.cores']}" -o 2 -gt "${BASHRCX_VARS['load.cores']}" ] || {
+      _pret[1]="${_pret[1]}\\[${BASHRCX_COLORS['default']}\\]"
+      _pret[1]="${_pret[1]}@${BASHRCX_VARS['load.cores']}"
+    }
   }
 }
 

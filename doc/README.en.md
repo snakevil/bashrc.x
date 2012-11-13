@@ -108,23 +108,25 @@ and defined corresponding variables.
 
 Colors defeind by `Bashrc.X`:
 
-* `$__BASHRC_X_PROMPTC_DEFAULT` - **Default color**, defaults as `$Chblack`
-* `$__BASHRC_X_PROMPTC_USER` - **User color**, defaults as `$Ccyan`
-* `$__BASHRC_X_PROMPTC_SUSER` - **Effective user color in `SUDO` mode**, defaults as `$Cred`
-* `$__BASHRC_X_PROMPTC_IP` - **`IP` color**, defaults as `$Cpurple`
-* `$__BASHRC_X_PROMPTC_SSH_IP` - **`IP` under `SSH` color**, defaults as
+* `$BASHRCX_COLOS[default]` - **Default color**, defaults as `$Chblack`
+* `$BASHRCX_COLOS[user]` - **User color**, defaults as `$Ccyan`
+* `$BASHRCX_COLOS[user.sudo]` - **Effective user color in `SUDO` mode**, defaults as `$Cred`
+* `$BASHRCX_COLOS[ip]` - **`IP` color**, defaults as `$Cpurple`
+* `$BASHRCX_COLOS[ip.ssh]` - **`IP` under `SSH` color**, defaults as
   `$Chblue`
-* `$__BASHRC_X_PROMPTC_PWD` - **`CWD` color**, defaults as `$Cyellow`
-* `$__BASHRC_X_PROMPTC_VCS` - **Repository branch color at `CWD`**, defaults as `$Cgreen`
-* `$__BASHRC_X_PROMPTC_JOBS` - **Background jobs color**, defaults as `$Chwhite`
-* `$__BASHRC_X_PROMPTC_LOAD` - **Load default color**, defaults as `$Chgreen`
-* `$__BASHRC_X_PROMPTC_LOAD2` - **Load color as notice (0.10-1.00)**, defaults as `$Chyellow`
-* `$__BASHRC_X_PROMPTC_LOAD3` - **Load color as warning (1.00+)**, defaults as `$Chred`
-* `$__BASHRC_X_PROMPTC_MEM` - **Memory default color**, defaults as `$Cgreen`
-* `$__BASHRC_X_PROMPTC_MEM2` - **Memory color as notice (40.0-79.9%)**, defaults as `$Cyellow`
-* `$__BASHRC_X_PROMPTC_MEM3` - **memory color as warning (80.0%+)**, defaults as `$Cred`
-* `$__BASHRC_X_PROMPTC_TC` - **Time consumed color by last command**, defaults as `$Cwhite`
-* `$__BASHRC_X_PROMPTC_EXIT` - **Exit code color of last command**, defaults as `$Chred`
+* `$BASHRCX_COLOS[pwd]` - **`CWD` color**, defaults as `$Cyellow`
+* `$BASHRCX_COLOS[vcs]` - **Repository branch color at `CWD`**, defaults as `$Cgreen`
+* `$BASHRCX_COLOS[jobs]` - **Background jobs color**, defaults as `$Chwhite`
+* `$BASHRCX_COLOS[load]` - **Load default color**, defaults as `$Chgreen`
+* `$BASHRCX_COLOS[load.2]` - **Load color as notice (0.10-1.00)**, defaults as `$Chyellow`
+* `$BASHRCX_COLOS[load.3]` - **Load color as warning (1.00+)**, defaults as `$Chred`
+* `$BASHRCX_COLOS[mem]` - **Memory default color**, defaults as `$Cgreen`
+* `$BASHRCX_COLOS[mem.2]` - **Memory color as notice (40.0-79.9%)**, defaults as `$Cyellow`
+* `$BASHRCX_COLOS[mem.3]` - **memory color as warning (80.0%+)**, defaults as `$Cred`
+* `$BASHRCX_COLOS[time-consumed]` - **Time consumed color by last command**,
+  defaults as `$Cwhite`
+* `$BASHRCX_COLOS[exit]` - **Exit code color of last command**, defaults as
+  `$Chred`
 
 ### Extensions ###
 
@@ -150,16 +152,16 @@ perfect experience, we should know the following 2 instructions:
 
 2. Function
 
-    Function name should be named alike `__BASHRC_X_PROMPT_*`. Give it a more
-    unique name, for all declared plugins could work fine.
+    Function name should be named alike `_bashrc.x-prompt-[1-2].[0-9][0-9]-*`.
+    Give it a more unique name, for all declared plugins could work fine.
 
 3. Return value
 
     For functions in [BASH][] could not return values directly, we chosen the
-    special array variable `_p` to act as the return parameter.
+    special array variable `_pret` to act as the return parameter.
 
     ```shell
-    _p=(
+    _pret=(
       1  # Controls the display position. '1' or '2' available, for the position
          # after CWD, or before the prompting symbol.
       "" # Controls the content including colors.

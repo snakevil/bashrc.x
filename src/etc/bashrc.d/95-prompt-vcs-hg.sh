@@ -20,27 +20,26 @@
 # @copyright © 2012 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
-[ -n "$__BASHRC_X_PROMPTC_VCS" ] || export __BASHRC_X_PROMPTC_VCS="$Cgreen"
+_bashrc.x-which 'hg' && {
+  [ -n "${BASHRCX_COLORS['vcs']}" ] || BASHRCX_COLORS['vcs']="$Cgreen"
 
-export __BASHRC_X_PROMPT_VCS_HG=("" "")
-
-__BASHRC_X_PROMPT_VCS_HG() {
-  _p=(1 "")
-  [ -n "${__BASHRC_X_CONFIG[prompt.vcs]}" ] || return
-  [ -z "${__BASHRC_X_PROMPT_VCS_HG[1]}" -a "$__BASHRC_X_PROMPT_OLDPWD" == "$PWD" ] \
-    || __BASHRC_X_PROMPT_VCS_HG=(
-        `'hg' branch 2> /dev/null`
-        ""
-      )
-  [ -z "$__BASHRC_X_PROMPT_VCS_HG" ] && {
-    'alias' hcd > /dev/null 2>&1 && 'unalias' hcd || return
-    'alias' hg > /dev/null 2>&1 && 'unalias' hg || return
-  } || {
-    _p[1]="\\[$__BASHRC_X_PROMPTC_DEFAULT\\]"
-    _p[1]="${_p[1]}${__BASHRC_X_CONFIG[prompt.vcs.delim]}h"
-    _p[1]="${_p[1]}\\[$__BASHRC_X_PROMPTC_VCS\\]${__BASHRC_X_PROMPT_VCS_HG[0]}"
-    'alias' hcd="cd '`'hg' root 2> /dev/null`'"
-    'alias' hg='__BASHRC_X_PROMPT_VCS_HG[1]=1; hg'
+  function _bashrc.x-prompt-1.00-vcs.hg {
+    _pret=(1 "")
+    [ -n "${BASHRCX_OPTS['prompt.vcs']}" ] || return
+    [ -z "${BASHRCX_VARS['vcs.hg.expired']}" -a "s${BASHRCX_VARS['pwd.old']}" = "s$PWD" ] || {
+      BASHRCX_VARS['vcs.hg']=`'hg' branch 2> /dev/null`
+      BASHRCX_VARS['vcs.hg.expired']=''
+    }
+    [ -z "${BASHRCX_VARS['vcs.hg']}" ] && {
+      'alias' hcd > /dev/null 2>&1 && 'unalias' hcd || return
+      'alias' hg > /dev/null 2>&1 && 'unalias' hg || return
+    } || {
+      _pret[1]="\\[${BASHRCX_COLORS['default']}\\]"
+      _pret[1]="${_pret[1]}${BASHRCX_OPTS['prompt.vcs.delim']}h"
+      _pret[1]="${_pret[1]}\\[${BASHRCX_COLORS['vcs']}\\]${BASHRCX_VARS['vcs.hg']}"
+      'alias' hcd="cd '`'hg' root 2> /dev/null`'"
+      'alias' hg='BASHRCX_VARS['vcs.hg.expired']=1; hg'
+    }
   }
 }
 

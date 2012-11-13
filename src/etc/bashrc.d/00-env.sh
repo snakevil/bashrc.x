@@ -24,14 +24,11 @@ export EDITOR=vim
 
 export INPUTRC=~/.local/bashrc.x/etc/inputrc
 
-'which' locale > /dev/null 2>&1 && {
-  export LANG=en_US.UTF-8
-  export LC_ALL=en_US.UTF-8
+_bashrc.x-which 'mkdir' && {
+  [ -d ~/.bashrc.x ] || 'mkdir' ~/.bashrc.x
 }
 
-[ -d ~/.bashrc.x ] || 'mkdir' ~/.bashrc.x
-
-PATH="/usr/sbin:/usr/bin:/sbin:/bin"
+PATH='/usr/sbin:/usr/bin:/sbin:/bin'
 MANPATH='/usr/share/man'
 [ -d /usr/local ] && {
   PATH="/usr/local/sbin:/usr/local/bin:$PATH"
@@ -51,13 +48,20 @@ PATH="$HOME/.bashrc.x/sbin:$HOME/.bashrc.x/bin:$PATH"
 export PATH
 export MANPATH
 
-case `'id' -gn` in
-  `'id' -un` | staff | users )
-    umask 022
-    ;;
-  * )
-    umask 002
-    ;;
-esac
+_bashrc.x-which 'locale' && {
+  export LANG='en_US.UTF-8'
+  export LC_ALL='en_US.UTF-8'
+}
+
+_bashrc.x-which 'id' && {
+  case `'id' -gn` in
+    `'id' -un` | 'staff' | 'users' )
+      umask 022
+      ;;
+    * )
+      umask 002
+      ;;
+  esac
+}
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

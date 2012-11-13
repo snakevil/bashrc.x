@@ -22,166 +22,176 @@
 
 # {{{1 x
 
-_x() {
-  COMPREPLY=()
-  [ "$1" = "$3" -o '-' = "${3:0:1}" ] || return
-  [ '--help' != "$3" -a '--version' != "$3" ] || return
-  COMPREPLY=(`'compgen' -W " $("$1" --help | 'awk' -v"p=$3" '
-        p == $1 {
-          next
-        }
-        "-" == substr( p, 1, 1 ) && "--" == substr( $1, 1, 2 ) {
-          next
-        }
-        "-" == substr( $1, 1, 1 ) {
-          print $1
-        }
-      '
-    ) $([ '-c' = "$3" ] || 'x' -s) " -- "$2"`)
+_bashrc.x-which 'awk' 'x' && {
+  function _x {
+    COMPREPLY=()
+    [ "$1" = "$3" -o '-' = "${3:0:1}" ] || return
+    [ '--help' != "$3" -a '--version' != "$3" ] || return
+    COMPREPLY=(`compgen -W " $("$1" --help | 'awk' -v"p=$3" '
+          p == $1 {
+            next
+          }
+          "-" == substr( p, 1, 1 ) && "--" == substr( $1, 1, 2 ) {
+            next
+          }
+          "-" == substr( $1, 1, 1 ) {
+            print $1
+          }
+        '
+      ) $([ '-c' = "$3" ] || 'x' -s) " -- "$2"`)
+  }
+  complete -F '_x' 'x'
 }
-'complete' -F _x x
 
 # }}}1
 
 # {{{1 xad
 
-_xad() {
-  COMPREPLY=()
-  [ "$1" = "$3" -o '-' = "${3:0:1}" ] || return
-  [ '--help' != "$3" -a '--version' != "$3" ] || return
-  local _r=`'basename' "$PWD" | 'sed' -e 's/[^a-zA-Z0-9]//g'`
-  'x' -q "$_r" > /dev/null && _r=""
-  COMPREPLY=(`'compgen' -W " $("$1" --help | 'awk' -v"p=$3" '
-        p == $1 {
-          next
-        }
-        "-" == substr( p, 1, 1 ) && "--" == substr( $1, 1, 2 ) {
-          next
-        }
-        "-" == substr( $1, 1, 1 ) {
-          print $1
-        }
-      '
-    ) $_r " -- "$2"`)
+_bashrc.x-which 'awk' 'basename' 'sed' 'x' && {
+  function _xad {
+    COMPREPLY=()
+    [ "$1" = "$3" -o '-' = "${3:0:1}" ] || return
+    [ '--help' != "$3" -a '--version' != "$3" ] || return
+    local rr=`'basename' "$PWD" | 'sed' -e 's/[^a-zA-Z0-9]//g'`
+    'x' -q "$rr" && rr=""
+    COMPREPLY=(`compgen -W " $("$1" --help | 'awk' -v"p=$3" '
+          p == $1 {
+            next
+          }
+          "-" == substr( p, 1, 1 ) && "--" == substr( $1, 1, 2 ) {
+            next
+          }
+          "-" == substr( $1, 1, 1 ) {
+            print $1
+          }
+        '
+      ) "$rr" " -- "$2"`)
+  }
+  complete -F '_xad' 'xad'
 }
-'complete' -F _xad xad
 
 # }}}1
 
 # {{{1 xcd
 
-xcd() {
-  [ 1 -eq $# -a '--help' != "$1" ] || {
-    'cat' << X_HELP
-Usage: xcd [ALIAS]
-Change working directory to the corresponding path to the ALIAS.
+_bashrc.x-which 'cat' 'tr' 'x' && {
+  function xcd {
+    [ 1 -eq $# -a 's--help' != "s$1" ] || {
+      'cat' << X_HELP
+  Usage: xcd [ALIAS]
+  Change working directory to the corresponding path to the ALIAS.
 
-Mandatory arguments to long options are mandatory for short options too.
-      --help     display this help and exit
-      --version  output version information and exit
+  Mandatory arguments to long options are mandatory for short options too.
+        --help     display this help and exit
+        --version  output version information and exit
 
-Exit status:
- 0  if OK,
- 1  if found none or more than 1 alias,
- 2  if found invalid alias,
- 3  if trying any non-existant alias,
- 4  if trying any non-existant directory.
+  Exit status:
+   0  if OK,
+   1  if found none or more than 1 alias,
+   2  if found invalid alias,
+   3  if trying any non-existant alias,
+   4  if trying any non-existant directory.
 
-Report bugs to zsnakevil@gmail.com
+  Report bugs to zsnakevil@gmail.com
 X_HELP
-    [ 1 -eq $# ] || return 1
-    return
+      [ 1 -eq $# ] || return 1
+      return
+    }
+    [ 's--version' != "s$1" ] || {
+      'x' --version
+      return
+    }
+    local aa="${1/\/*/}" pp
+    [ -n "$aa" -a 's' = "s$(echo "$aa" | 'tr' -d '[:alnum:]')" ] || {
+      echo 'xcd: invalid `'"$aa' with symbols" >&2
+      return 2
+    }
+    pp=`'x' -q "$aa"`
+    [ 0 -eq $? -a -n "$pp" ] || {
+      echo 'xcd: non-existant `'"$aa'" >&2
+      return 3
+    }
+    pp="${1/$aa/$pp}"
+    [ -d "$pp" ] || {
+      echo 'xcd: non-existant `'"$pp'" >&2
+      return 4
+    }
+    cd "$pp"
   }
-  [ '--version' != "$1" ] || {
-    'x' --version
-    return
-  }
-  local _a="${1/\/*/}" _p
-  [ -n "$_a" -a 's' = "s$(echo "$_a" | 'tr' -d '[:alnum:]')" ] || {
-    echo 'xcd: invalid `'"$_a' with symbols" >&2
-    return 2
-  }
-  _p=`'x' -q "$_a"`
-  [ 0 -eq $? -a -n "$_p" ] || {
-    echo 'xcd: non-existant `'"$_a'" >&2
-    return 3
-  }
-  _p="${1/$_a/$_p}"
-  [ -d "$_p" ] || {
-    echo 'xcd: non-existant `'"$_p'" >&2
-    return 4
-  }
-  cd "$_p"
 }
 
-_xcd() {
-  local _a _e _l=() _p _s _t
-  COMPREPLY=()
-  [ "s$1" = "s$3" ] || return
-  [ -n "$2" -a 's-' != "s${2:0:1}" ] || {
-    COMPREPLY=(`'compgen' -W "--help --version $('x' -s)" -- "$2"`)
-    return
-  }
-  _a="${2/\/*/}"
-  _p=`'x' -q "$_a"`
-  _e=$?
-  [ 0 -eq $_e ] || {
-    _l=(`'compgen' -W "$('x' -s | 'xargs' -i echo '{}/')" -- "$2"`)
-    [ 1 -eq ${#_l[@]} ] || {
-      COMPREPLY=(${_l[@]})
+_bashrc.x-which 'true' 'x' 'xargs' && {
+  function _xcd {
+    local aa ee ll=() pp tt
+    COMPREPLY=()
+    [ "$1" = "$3" ] || return
+    [ -n "$2" -a 's-' != "s${2:0:1}" ] || {
+      COMPREPLY=(`compgen -W "--help --version $('x' -s)" -- "$2"`)
       return
     }
-    _a="${_l[0]%/}"
-    _p=`'x' -q "$_a"`
-  }
-  _t="${2/$_a/$_p}"
-  [ "s$_t" != "s$2" ] || _t="$_p"
-  [ "s$_t" != "s$_p" ] || _t="$_t/"
-  while 'true'; do
-    _l=(`'compgen' -d -- "$_t"`)
-    [ 1 -eq ${#_l[@]} ] || {
-      [ 0 -eq ${#_l[@]} ] && {
-        _t="${_t/$_p/$_a}"
-        [ "s$_t" = "s$2" ] && COMPREPLY=() || COMPREPLY=("$_t")
-      } || COMPREPLY=(${_l[@]/$_p/$_a})
-      return
+    aa="${2/\/*/}"
+    pp=`'x' -q "$aa"`
+    ee=$?
+    [ 0 -eq $ee ] || {
+      ll=(`compgen -W "$('x' -s | 'xargs' -i echo '{}/')" -- "$2"`)
+      [ 1 -eq ${#ll[@]} ] || {
+        COMPREPLY=(${ll[@]})
+        return
+      }
+      aa="${ll[0]%/}"
+      pp=`'x' -q "$aa"`
     }
-    _t="${_l[0]}/"
-  done
+    tt="${2/$aa/$pp}"
+    [ "s$tt" != "s$2" ] || tt="$pp"
+    [ "s$tt" != "s$pp" ] || tt="$tt/"
+    while 'true'; do
+      ll=(`compgen -d -- "$tt"`)
+      [ 1 -eq ${#ll[@]} ] || {
+        [ 0 -eq ${#ll[@]} ] && {
+          tt="${tt/$pp/$aa}"
+          [ "s$tt" = "s$2" ] && COMPREPLY=() || COMPREPLY=("$tt")
+        } || COMPREPLY=(${ll[@]/$pp/$aa})
+        return
+      }
+      tt="${ll[0]}/"
+    done
+  }
+  complete -o 'nospace' -F '_xcd' 'xcd'
 }
-'complete' -o nospace -F _xcd xcd
 
 # }}}1
 
 # {{{1 xrm
 
-_xrm() {
-  local _l="$('x' -s | 'awk' -v"p=$3" '
-        p != $1 {
-          print
-        }
-      '
-    )"
-  COMPREPLY=()
-  [ "$1" = "$3" -o '-' = "${3:0:1}" ] || {
-    COMPREPLY=(`'compgen' -W "$_l" -- "$2"`)
-    return
+_bashrc.x-which 'awk' 'x' && {
+  function _xrm {
+    local ll="$('x' -s | 'awk' -v"p=$3" '
+          p != $1 {
+            print
+          }
+        '
+      )"
+    COMPREPLY=()
+    [ "$1" = "$3" -o '-' = "${3:0:1}" ] || {
+      COMPREPLY=(`compgen -W "$ll" -- "$2"`)
+      return
+    }
+    [ '--help' != "$3" -a '--version' != "$3" ] || return
+    COMPREPLY=(`compgen -W " $("$1" --help | 'awk' -v"p=$3" '
+          p == $1 {
+            next
+          }
+          "-" == substr( p, 1, 1 ) && "--" == substr( $1, 1, 2 ) {
+            next
+          }
+          "-" == substr( $1, 1, 1 ) {
+            print $1
+          }
+        '
+      ) $ll " -- "$2"`)
   }
-  [ '--help' != "$3" -a '--version' != "$3" ] || return
-  COMPREPLY=(`'compgen' -W " $("$1" --help | 'awk' -v"p=$3" '
-        p == $1 {
-          next
-        }
-        "-" == substr( p, 1, 1 ) && "--" == substr( $1, 1, 2 ) {
-          next
-        }
-        "-" == substr( $1, 1, 1 ) {
-          print $1
-        }
-      '
-    ) $_l " -- "$2"`)
+  complete -F '_xrm' 'xrm'
 }
-'complete' -F _xrm xrm
 
 # }}}1
 
