@@ -29,7 +29,9 @@
 export __BASHRC_X_PROMPT_LOAD=(
   0.00
   0
-  `'awk' '"processor"==$1{n++}END{print n}' /proc/cpuinfo`
+  `[ 'sDarwin' = "s$('uname' -s)" ] \
+    && 'sysctl' -n machdep.cpu.core_count \
+    || 'awk' '"processor"==$1{n++}END{print n}' /proc/cpuinfo`
   1
 )
 
