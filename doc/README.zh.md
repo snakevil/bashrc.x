@@ -75,14 +75,17 @@ cd -
 
 使用配置指令`config-bashrc.x`，可以使`Bashrc.X`的功能配置组合更加灵活。如：
 
+* `prompt.date` - **显示／屏蔽日期提示**
 * `prompt.exit` - **启用／禁用指令退出码提示插件**
 * `prompt.ip.cut` - **启用／禁用IP截取模式**
 * `prompt.jobs` - **启用／禁用后台保持任务提示插件**
 * `prompt.load` - **启用／禁用系统负载提示插件**
+* `prompt.load.cores` - **显示／屏蔽系统负载提示插件`CPU`内核数**
 * `prompt.load.interval` - **设置系统负载更新周期（单位：秒）**
 * `prompt.mem` - **启用／禁用内存使用提示插件**
 * `prompt.mem.interval` - **设置内存使用更新周期（单位：秒）**
 * `prompt.pwd.compressed` - **启用／禁用当前目录路径压缩模式**
+* `prompt.time` - **显示／屏蔽时间提示**
 * `prompt.time-consumed` - **启用／禁用指令执行时间提示插件**
 * `prompt.vcs` - **启用／禁用版本库分支提示插件**
 * `prompt.vcs.delim` - **设置版本库分支提示插件引导内容**
@@ -108,9 +111,9 @@ cd -
 * `$BASHRCX_COLORS[pwd]` - **当前目录路径字段色**，默认为`$Cyellow`
 * `$BASHRCX_COLORS[vcs]` - **当前目录版本库分支字段色**，默认为`$Cgreen`
 * `$BASHRCX_COLORS[jobs]` - **后台保持任务字段色**，默认为`$Chwhite`
-* `$BASHRCX_COLORS[load]` - **负载字段默认色**，默认为`$Chgreen`
-* `$BASHRCX_COLORS[load.2]` - **负载字段（0.10-1.00）阶段色**，默认为`$Chyellow`
-* `$BASHRCX_COLORS[load.3]` - **负载字段（1.00+）阶段色**，默认为`$Chred`
+* `$BASHRCX_COLORS[load]` - **负载字段默认色**，默认为`$Cgreen`
+* `$BASHRCX_COLORS[load.2]` - **负载字段（0.10-1.00）阶段色**，默认为`$Cyellow`
+* `$BASHRCX_COLORS[load.3]` - **负载字段（1.00+）阶段色**，默认为`$Cred`
 * `$BASHRCX_COLORS[mem]` - **内存字段默认色**，默认为`$Cgreen`
 * `$BASHRCX_COLORS[mem.2]` - **内存字段（40.0-79.9%）阶段色**，默认为`$Cyellow`
 * `$BASHRCX_COLORS[mem.3]` - **内存字段（80.0%+）阶段色**，默认为`$Cred`

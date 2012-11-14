@@ -79,16 +79,20 @@ Customization
 To make `Bashrc.X` more agile, you can use the command `config-bashrc.x`. For
 example:
 
+* `prompt.date` - **Display / Suppress the date**
 * `prompt.exit` - **Enable / Disable the last command exit code plugin**
 * `prompt.ip.cut` - ** Enable / Disable the IP cut mode**
 * `prompt.jobs` - **Enable / Disable background jobs plugin**
 * `prompt.load` - **Enable / Disable the system load plugin**
+* `prompt.load.cores` - **Display / Suppress the `CPU` cores of the system load
+  plugin**
 * `prompt.load.interval` - **Set the interval time (seconds) of updating system
   load**
 * `prompt.mem` - **Enable / Disable the memory usage plugin**
 * `prompt.mem.interval` - **Set the interval time (seconds) of updating memory
   usage**
 * `prompt.pwd.compressed` - **Enable / Disable CWD compression mode**
+* `prompt.time` - **Display / Suppress the date**
 * `prompt.time-consumed` - **Enable / Disable the last command time-consuming
   plugin**
 * `prompt.vcs` - **Enable / Disable the repository branch plugin**
@@ -117,9 +121,9 @@ Colors defeind by `Bashrc.X`:
 * `$BASHRCX_COLOS[pwd]` - **`CWD` color**, defaults as `$Cyellow`
 * `$BASHRCX_COLOS[vcs]` - **Repository branch color at `CWD`**, defaults as `$Cgreen`
 * `$BASHRCX_COLOS[jobs]` - **Background jobs color**, defaults as `$Chwhite`
-* `$BASHRCX_COLOS[load]` - **Load default color**, defaults as `$Chgreen`
-* `$BASHRCX_COLOS[load.2]` - **Load color as notice (0.10-1.00)**, defaults as `$Chyellow`
-* `$BASHRCX_COLOS[load.3]` - **Load color as warning (1.00+)**, defaults as `$Chred`
+* `$BASHRCX_COLOS[load]` - **Load default color**, defaults as `$Cgreen`
+* `$BASHRCX_COLOS[load.2]` - **Load color as notice (0.10-1.00)**, defaults as `$Cyellow`
+* `$BASHRCX_COLOS[load.3]` - **Load color as warning (1.00+)**, defaults as `$Cred`
 * `$BASHRCX_COLOS[mem]` - **Memory default color**, defaults as `$Cgreen`
 * `$BASHRCX_COLOS[mem.2]` - **Memory color as notice (40.0-79.9%)**, defaults as `$Cyellow`
 * `$BASHRCX_COLOS[mem.3]` - **memory color as warning (80.0%+)**, defaults as `$Cred`

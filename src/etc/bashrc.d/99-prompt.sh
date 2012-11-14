@@ -49,6 +49,8 @@ _bashrc.x-which 'sed' && {
       || [ -z "${BASHRCX_VARS['pwd']}" ] \
         || ss="${ss}s/\\\\w/$(echo "${BASHRCX_VARS['pwd']}" \
             | 'sed' -e 's/\//\\\//g')/g;"
+    [ -n "${BASHRCX_OPTS['prompt.date']}" ] || ss="${ss}s/\\\d //;"
+    [ -n "${BASHRCX_OPTS['prompt.time']}" ] || ss="${ss}s/\\\A //;"
     [ -z "${BASHRCX_OPTS['prompt.exit']}" ] || {
       [ 0 -eq $ee ] || {
         xx[1]="${xx[1]} \\[${BASHRCX_COLORS['default']}\\]e"
@@ -61,7 +63,7 @@ _bashrc.x-which 'sed' && {
       ss="${ss}s/>\\\\n/${xx[0]//\//\\/}>\\\\n/;"
     }
     [ -z "${xx[1]}" ] && {
-      ss="${ss}s/ \\[\\] / /;"
+      ss="${ss}s/\\[\\] //;"
     } || {
       xx[1]="${xx[1]:1}"
       xx[1]="${xx[1]//\\/\\\\}"

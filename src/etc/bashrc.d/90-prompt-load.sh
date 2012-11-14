@@ -60,6 +60,7 @@ _bashrc.x-which 'awk' 'date' 'uname' 'uptime' && {
         ;;
     esac
     _pret[1]="${_pret[1]}${BASHRCX_VARS['load']}"
+    [ -n "${BASHRCX_OPTS['prompt.load.cores']}" ] || return
     [ -z "${BASHRCX_VARS['load.cores']}" -o 2 -gt "${BASHRCX_VARS['load.cores']}" ] || {
       _pret[1]="${_pret[1]}\\[${BASHRCX_COLORS['default']}\\]"
       _pret[1]="${_pret[1]}@${BASHRCX_VARS['load.cores']}"

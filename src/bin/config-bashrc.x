@@ -202,14 +202,17 @@ _cbx_awk_() {
         return x
       }
       BEGIN {
+        dd[ "prompt.date"           ] = 1
         dd[ "prompt.exit"           ] = 1
         dd[ "prompt.ip.cut"         ] = 1
         dd[ "prompt.jobs"           ] = 1
         dd[ "prompt.load"           ] = 1
+        dd[ "prompt.load.cores"     ] = 1
         dd[ "prompt.load.interval"  ] = 30
         dd[ "prompt.mem"            ] = 1
         dd[ "prompt.mem.interval"   ] = 30
         dd[ "prompt.pwd.compressed" ] = 1
+        dd[ "prompt.time"           ] = 1
         dd[ "prompt.time-consumed"  ] = 1
         dd[ "prompt.vcs"            ] = 1
         dd[ "prompt.vcs.delim"      ] = "/"
