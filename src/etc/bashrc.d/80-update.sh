@@ -30,7 +30,7 @@ _bashrc.x-which 'cat' 'cut' 'date' 'git' 'readlink' && {
     return
   } || {
     dd=`'readlink' -f ~/.local/bashrc.x`
-    [ ! -d "$dd" -o "s${cc[0]}" = "s$tt" ] || {
+    [ ! -d "$dd/../.git" -o "s${cc[0]}" = "s$tt" ] || {
       echo -ne "\n\e[1;33mbashrc.x: checking update..." >&3
       echo $tt > ~/.bashrc.x/updaterc
       bb=`cd "$dd"; 'git' symbolic-ref HEAD`
@@ -41,7 +41,7 @@ _bashrc.x-which 'cat' 'cut' 'date' 'git' 'readlink' && {
       [ -z "$bb" -o -z "${vv[0]}" -o -z "${vv[1]}" ] \
         && echo -e "\e[1;31mfailed.\e[0m" >&3 \
         || {
-          [ "s${vv[0]}" = "s${vv[1]}" ] && 'echo' -e "up-to-date.\e[0m" >&2 \
+          [ "s${vv[0]}" = "s${vv[1]}" ] && 'echo' -e "up-to-date.\e[0m" >&3 \
           || {
             cc[1]=1
             mm="run "'`'"\e[1;32mupdate-bashrc.x\e[1;33m' to update"
