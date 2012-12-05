@@ -21,7 +21,8 @@
 # @license   http://www.gnu.org/licenses/gpl.html
 
 _bashrc.x-which 'awk' 'ifconfig' && {
-  BASHRCX_VARS['ip']=`'ifconfig' | 'awk' '!x&&/inet /&&!/127\./{x=1;print $2}'`
+  BASHRCX_VARS['ip']=`'ifconfig' \
+    | 'awk' '!x&&/inet /&&!/127\./{x=1;sub(/^.*:/,"",$2);print $2}'`
 
   [ -z "${BASHRCX_VARS['ip']}" ] \
     || BASHRCX_VARS['ip.cut']=`echo "${BASHRCX_VARS['ip']}" \
