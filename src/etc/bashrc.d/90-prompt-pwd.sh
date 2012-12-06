@@ -48,8 +48,9 @@ _bashrc.x-which 'gawk' && {
               l = length( $k )
               for ( m = 1; m <= l; m++) {
                 n = 0
-                o = "ls -d " j substr( $k, 1, m ) "*"
-                while ( 0 < ( o | getline p) ) n++
+                o = "ls -dF " j substr( $k, 1, m ) "*"
+                while ( 0 < ( o | getline p ) )
+                  if ( "/" == substr( p, length( p ) ) ) n++
                 close( o )
                 if ( 1 == n ) break
               }
