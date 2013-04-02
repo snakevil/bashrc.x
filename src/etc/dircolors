@@ -145,22 +145,34 @@ EXEC                  01;32 # Cx executable
 .tar  01;04;31
 .wim  01;04;31
 
-.cfg       33 # Configuration files
-.cnf       33
-.cnf-dist  33
-.cnf.dist  33
-.conf      33
-.conf-dist 33
-.conf.dist 33
-.gitconfig 33
-.gitignore 33
-.local     33
-.inf       33
-.ini       33
-.ini-dist  33
-.ini.dist  33
-.rc        33
-.vimrc     33
+.cfg            33 # Configuration files
+.cnf            33
+.cnf-dist       33
+.cnf.dist       33
+.conf           33
+.conf-dist      33
+.conf.dist      33
+.dist.cnf       33
+.dist.conf      33
+.dist.ini       33
+.dist.json      33
+.dist.xml       33
+.gitattributes  33
+.gitconfig      33
+.gitignore      33
+.gitmodules     33
+.hgignore       33
+.inf            33
+.ini            33
+.ini-dist       33
+.ini.dist       33
+.json-dist      33
+.json.dist      33
+.local          33
+.rc             33
+.vimrc          33
+.xml-dist       33
+.xml.dist       33
 
 .ai   01;35 # Graphical files
 .bmp  01;35
@@ -174,7 +186,8 @@ EXEC                  01;32 # Cx executable
 .xbm  01;35
 .xpm  01;35
 
-.avi  04;35 # Multimedia files
+.aac  04;35 # Multimedia files
+.avi  04;35
 .flv  04;35
 .m4a  04;35
 .m4v  04;35
@@ -185,6 +198,9 @@ EXEC                  01;32 # Cx executable
 .mp4  04;35
 .mpeg 04;35
 .mpg  04;35
+.ogg  04;35
+.rm   04;35
+.rmvb 04;35
 .ts   04;35
 .wma  04;35
 .wmv  04;35
@@ -205,6 +221,7 @@ EXEC                  01;32 # Cx executable
 .htm    04;37 # Data source files
 .html   04;37
 .htpl   04;37
+.json   04;37
 .plist  04;37
 .ptpl   04;37
 .tpl    04;37
