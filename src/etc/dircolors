@@ -17,7 +17,7 @@
 #
 # @package   bashrc.x
 # @author    Snakevil Zen <zsnakevil@gmail.com>
-# @copyright © 2012 szen.in
+# @copyright © 2014 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
 TERM Eterm
@@ -97,6 +97,8 @@ EXEC                  01;32 # Cx executable
 .lesshst            01;30
 .mysql_history      01;30
 .pearrc             01;30
+.php_history        01;30
+.rnd                01;30
 .sqlite_history     01;30
 .viminfo            01;30
 .Xauthority         01;30
@@ -126,53 +128,55 @@ EXEC                  01;32 # Cx executable
 .tbz  01;31
 .tbz2 01;31
 .tgz  01;31
+.xz   01;31
 .Z    01;31
 .z    01;31
 .zip  01;31
 
-.b5t  01;04;31 # Image files
-.bwt  01;04;31
-.ccd  01;04;31
-.cdi  01;04;31
-.cue  01;04;31
-.dmg  01;04;31
-.iso  01;04;31
-.isz  01;04;31
-.mds  01;04;31
-.mou  01;04;31
-.nrg  01;04;31
-.pdi  01;04;31
-.tar  01;04;31
-.wim  01;04;31
+.b5t 01;04;31 # Image files
+.bwt 01;04;31
+.ccd 01;04;31
+.cdi 01;04;31
+.cue 01;04;31
+.dmg 01;04;31
+.iso 01;04;31
+.isz 01;04;31
+.mds 01;04;31
+.mou 01;04;31
+.nrg 01;04;31
+.pdi 01;04;31
+.tar 01;04;31
+.wim 01;04;31
 
-.cfg            33 # Configuration files
-.cnf            33
-.cnf-dist       33
-.cnf.dist       33
-.conf           33
-.conf-dist      33
-.conf.dist      33
-.dist.cnf       33
-.dist.conf      33
-.dist.ini       33
-.dist.json      33
-.dist.xml       33
-.gitattributes  33
-.gitconfig      33
-.gitignore      33
-.gitmodules     33
-.hgignore       33
-.inf            33
-.ini            33
-.ini-dist       33
-.ini.dist       33
-.json-dist      33
-.json.dist      33
-.local          33
-.rc             33
-.vimrc          33
-.xml-dist       33
-.xml.dist       33
+.cfg           33 # Configuration files
+.cnf           33
+.cnf-dist      33
+.cnf.dist      33
+.conf          33
+.conf-dist     33
+.conf.dist     33
+.dist.cnf      33
+.dist.conf     33
+.dist.ini      33
+.dist.json     33
+.dist.xml      33
+.gitattributes 33
+.gitconfig     33
+.gitignore     33
+.gitmodules    33
+.hgignore      33
+.inf           33
+.ini           33
+.ini-dist      33
+.ini.dist      33
+.json-dist     33
+.json.dist     33
+.local         33
+.rc            33
+.vimrc         33
+.wgetrc        33
+.xml-dist      33
+.xml.dist      33
 
 .ai   01;35 # Graphical files
 .bmp  01;35
@@ -188,6 +192,7 @@ EXEC                  01;32 # Cx executable
 
 .aac  04;35 # Multimedia files
 .avi  04;35
+.dts  04;35
 .flv  04;35
 .m4a  04;35
 .m4v  04;35
@@ -215,16 +220,18 @@ EXEC                  01;32 # Cx executable
 .rb   00;37
 .sh   00;37
 .sql  00;37
+.tpl  00;37
+.twig 00;37
 .vbs  00;37
 .xsl  00;37
+.xslt 00;37
 
-.htm    04;37 # Data source files
-.html   04;37
-.htpl   04;37
-.json   04;37
-.plist  04;37
-.ptpl   04;37
-.tpl    04;37
-.xml    04;37
+.htm   04;37 # Data source files
+.html  04;37
+.htpl  04;37
+.json  04;37
+.plist 04;37
+.ptpl  04;37
+.xml   04;37
 
 # vim: se ft=dircolors ff=unix fenc=utf-8 sw=2 ts=2 sts=2:
