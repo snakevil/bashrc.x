@@ -63,8 +63,9 @@ _bashrc.x-which 'date' && {
       BASHRCX_VARS['checkpoint']=`'date' +'%s.%N'`
       BASHRCX_VARS['checkpoint.ok']=''
     }
+    _="$1"
   }
-  trap '_bashrc.x-checkpoint' 'DEBUG'
+  trap '_bashrc.x-checkpoint "$_"' 'DEBUG'
 }
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:
