@@ -16,22 +16,13 @@ Bashrc.X
 ### 安装 ###
 
 ```shell
-'mkdir' -p ~/.local && cd ~/.local
-[ -d bashrc.x.git/.git ] || \
-  'rm' -fr bashrc.x.git && \
-    'git' clone git://github.com/snakevil/bashrc.x bashrc.x.git
-[ -L bashrc.x ] || 'rm' -fr bashrc.x && 'ln' -s bashrc.x.git/src bashrc.x
-for i in bash_profile bashrc; do
-  'rm' -fr ~/.$i
-  'ln' -s .local/bashrc.x/etc/$i ~/.$i
-done
-cd -
+'curl' -sS https://raw.githubusercontent.com/snakevil/bashrc.x/master/share/install.sh | 'sh'
 ```
 
 ### 卸载 ###
 
 ```shell
-'rm' -fr ~/.bash_profile ~/.bashrc ~/.local/bashrc.x ~/.local/bashrc.x.git
+'rm' -fr ~/.bash_profile ~/.bashrc ~/.local/bashrc.x ~/.local/.bashrc.x.git
 ```
 
 功能简介
@@ -162,7 +153,7 @@ cd -
 [etc/bashrc.d/90-prompt-jobs.sh](https://github.com/snakevil/bashrc.x/blob/master/src/etc/bashrc.d/90-prompt-jobs.sh)
 。
 
-###### Copyright © 2012 [Snakevil Zen][me]. ALL RIGHTS RESERVED. ######
+###### Copyright © 2014 [Snakevil Zen][me]. ALL RIGHTS RESERVED. ######
 
 [profilex]: https://github.com/snakevil/profilex (ProfileX)
 [bash]: http://www.gnu.org/software/bash/manual/html_node/index.html
