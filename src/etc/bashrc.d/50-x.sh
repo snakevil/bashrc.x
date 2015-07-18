@@ -145,12 +145,13 @@ _bashrc.x-which 'true' 'x' 'xargs' && {
     [ "s$tt" != "s$2" ] || tt="$pp"
     [ "s$tt" != "s$pp" ] || tt="$tt/"
     while 'true'; do
-      ll=(`compgen -d -- "$tt"`)
+      ll=(`compgen -d -- "$tt" | 'tr' ' ' '|'`)
+      ll=("${ll[@]/|/ }")
       [ 1 -eq ${#ll[@]} ] || {
         [ 0 -eq ${#ll[@]} ] && {
           tt="${tt/$pp/$aa}"
           [ "s$tt" = "s$2" ] && COMPREPLY=() || COMPREPLY=("$tt")
-        } || COMPREPLY=(${ll[@]/$pp/$aa})
+        } || COMPREPLY=("${ll[@]/$pp/$aa}")
         return
       }
       tt="${ll[0]}/"
