@@ -22,7 +22,10 @@
 
 export EDITOR=vim
 
-export INPUTRC=~/.local/bashrc.x/etc/inputrc
+[ -r ~/.bashrc.x/inputrc ] \
+  && INPUTRC=~/.bashrc.x/inputrc \
+  || INPUTRC=~/.local/bashrc.x/etc/inputrc
+export INPUTRC
 
 _bashrc.x-which 'mkdir' && {
   [ -d ~/.bashrc.x ] || 'mkdir' ~/.bashrc.x
