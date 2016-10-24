@@ -17,24 +17,22 @@
 #
 # @package   bashrc.x
 # @author    Snakevil Zen <zsnakevil@gmail.com>
-# @copyright © 2012 szen.in
+# @copyright © 2016 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
 ii=`set -o | 'awk' '"xtrace"==$1{print $2}'`
-[ 'soff' = "s$ii" ] || set +x
+[ 'xoff' = "x$ii" ] || set +x
 
 [ -n "$BASH_COMPLETION" ] || {
   if [ -f '/opt/local/etc/bash_completion' ]; then
     source '/opt/local/etc/bash_completion'
-  elif [ -f '/user/local/etc/bash_completion' ]; then
-    source '/user/local/etc/bash_completion'
-  elif [ -f '/user/etc/bash_completion' ]; then
-    source '/user/etc/bash_completion'
+  elif [ -f '/usr/local/etc/bash_completion' ]; then
+    source '/usr/local/etc/bash_completion'
   elif [ -f '/etc/bash_completion' ]; then
     source '/etc/bash_completion'
   fi
 }
 
-[ 'soff' = "s$ii" ] || set -x
+[ 'xoff' = "x$ii" ] || set -x
 
 # vim: se ft=sh ff=unix fenc=utf-8 sw=2 ts=2 sts=2:

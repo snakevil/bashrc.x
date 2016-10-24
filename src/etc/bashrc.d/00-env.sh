@@ -17,7 +17,7 @@
 #
 # @package   bashrc.x
 # @author    Snakevil Zen <zsnakevil@gmail.com>
-# @copyright © 2012 szen.in
+# @copyright © 2016 szen.in
 # @license   http://www.gnu.org/licenses/gpl.html
 
 export EDITOR=vim
@@ -36,6 +36,10 @@ MANPATH='/usr/share/man'
 [ -d /usr/local ] && {
   PATH="/usr/local/sbin:/usr/local/bin:$PATH"
   MANPATH="/usr/local/share/man:$MANPATH"
+}
+[ -d /usr/local/Homebrew ] && {
+  PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
+  MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
 }
 [ -d /opt/local ] && {
   PATH="/opt/local/sbin:/opt/local/libexec/gnubin:/opt/local/bin:$PATH"
